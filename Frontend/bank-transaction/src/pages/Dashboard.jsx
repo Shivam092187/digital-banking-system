@@ -9,29 +9,41 @@ import TransactionList from "../components/TransactionList";
 function Dashboard() {
 
   const [balance, setBalance] = useState(0);
-  const [accountId, setAccountId] = useState(localStorage.getItem("accountId"));
-  const [open, setOpen] = useState(false);
+
+  const [accountId, setAccountId] = useState(
+    localStorage.getItem("accountId")
+  );
 
   const token = localStorage.getItem("token");
 
+  /**
+   * 🔥 FETCH BALANCE
+   */
   const fetchBalance = async (id = accountId) => {
     try {
+
       if (!id) return setBalance(0);
 
       const res = await axios.get(
         `https://digital-banking-system-1.onrender.com/api/accounts/balance/${id}`,
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
       setBalance(res.data.balance || 0);
 
     } catch (err) {
+      console.log(err);
       setBalance(0);
     }
   };
 
+  /**
+   * 🔥 ACCOUNT CHANGE LISTENER
+   */
   useEffect(() => {
 
     const handler = () => {
@@ -52,50 +64,60 @@ function Dashboard() {
     fetchBalance(accountId);
   }, [accountId]);
 
+
   return (
     <div className="flex bg-gray-100 min-h-screen">
 
       {/* SIDEBAR */}
-      <Sidebar open={open} setOpen={setOpen} />
+      <Sidebar />
 
-      {/* MAIN */}
-      <div className="flex-1 md:ml-64 p-6">
-
-        {/* MOBILE MENU */}
-        <button
-          className="md:hidden bg-blue-600 text-white px-3 py-2 rounded mb-4"
-          onClick={() => setOpen(true)}
-        >
-          ☰ Menu
-        </button>
+      {/* MAIN CONTENT (🔥 FIXED HERE) */}
+      <div className="flex-1 p-6 md:ml-64">
 
         {/* HEADER */}
         <div className="bg-white rounded-xl shadow p-5 mb-6">
-          <h1 className="text-3xl font-bold">Digital Banking Dashboard</h1>
+
+          <h1 className="text-3xl font-bold text-gray-800">
+            Digital Banking Dashboard
+          </h1>
 
           <p className="text-blue-700 break-all mt-2">
             {accountId || "No Account Selected"}
           </p>
+
         </div>
 
         {/* BALANCE */}
         <div className="bg-blue-600 text-white rounded-xl p-6 mb-6">
+
           <h2>Current Balance</h2>
-          <p className="text-4xl font-bold">₹ {balance}</p>
+
+          <p className="text-4xl font-bold mt-2">
+            ₹ {balance}
+          </p>
+
         </div>
 
         {/* ACTIONS */}
         <div className="grid md:grid-cols-2 gap-6 mb-6">
 
-          <AddFund accountId={accountId} onSuccess={() => fetchBalance(accountId)} />
+          <AddFund
+            accountId={accountId}
+            onSuccess={() => fetchBalance(accountId)}
+          />
 
-          <Transfer accountId={accountId} onSuccess={() => fetchBalance(accountId)} />
+          <Transfer
+            accountId={accountId}
+            onSuccess={() => fetchBalance(accountId)}
+          />
 
         </div>
 
+        {/* TRANSACTIONS */}
         <TransactionList />
 
       </div>
+
     </div>
   );
 }
