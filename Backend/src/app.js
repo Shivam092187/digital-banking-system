@@ -5,29 +5,24 @@ const cors = require("cors");
 const app = express();
 
 /**
- *  MIDDLEWARES
+ * MIDDLEWARES
  */
 app.use(express.json());
 app.use(cookieParser());
 
 /**
- * 🔥 CORS FIX (PRODUCTION SAFE)
+ * 🔥 CORS (PRODUCTION SAFE)
  */
 app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://digital-banking-system-2.onrender.com"
+      "https://digital-banking-system-2.onrender.com",
     ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
   })
 );
-
-/**
- * 🔥 PRE-FLIGHT FIX (IMPORTANT FOR NETWORK ERROR)
- */
-app.options("*", cors());
 
 /**
  * ROUTES
