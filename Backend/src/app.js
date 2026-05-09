@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 /**
- * 🔥 CORS FIX (IMPORTANT)
+ * 🔥 CORS FIX (PRODUCTION SAFE)
  */
 app.use(
   cors({
@@ -19,12 +19,18 @@ app.use(
       "http://localhost:5173",
       "https://digital-banking-system-2.onrender.com"
     ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
 );
 
 /**
- *  ROUTES IMPORT
+ * 🔥 PRE-FLIGHT FIX (IMPORTANT FOR NETWORK ERROR)
+ */
+app.options("*", cors());
+
+/**
+ * ROUTES
  */
 const authRouter = require("./routes/auth.routes");
 const accountRouter = require("./routes/account.routes");
@@ -34,9 +40,6 @@ app.get("/", (req, res) => {
   res.send("🚀 Ledger Service Running");
 });
 
-/**
- * 🔥 API ROUTES
- */
 app.use("/api/auth", authRouter);
 app.use("/api/accounts", accountRouter);
 app.use("/api/transactions", transactionRoutes);
