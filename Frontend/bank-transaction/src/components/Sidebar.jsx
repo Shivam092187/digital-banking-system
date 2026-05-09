@@ -5,9 +5,6 @@ import { useNavigate } from "react-router-dom";
 function Sidebar() {
 
   const [accounts, setAccounts] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  // 🔥 SIMPLE MENU STATE
   const [open, setOpen] = useState(false);
 
   const navigate = useNavigate();
@@ -32,34 +29,6 @@ function Sidebar() {
     fetchAccounts();
   }, []);
 
-  const createAccount = async () => {
-    try {
-      setLoading(true);
-
-      const res = await axios.post(
-        "https://digital-banking-system-1.onrender.com/api/accounts",
-        {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      await fetchAccounts();
-
-      if (res.data.account?._id) {
-        localStorage.setItem("accountId", res.data.account._id);
-      }
-
-      alert("Account Created");
-      setOpen(false);
-
-    } catch (err) {
-      alert("Failed");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const selectAccount = (id) => {
     localStorage.setItem("accountId", id);
     navigate("/dashboard");
@@ -72,58 +41,51 @@ function Sidebar() {
   };
 
   return (
-    <div className="bg-blue-900 text-white">
-
-      {/* 🔥 TOP BAR */}
-      <div className="flex items-center justify-between p-3 md:hidden">
-
+    <>
+      {/* MOBILE TOP BAR */}
+      <div className="md:hidden bg-blue-900 text-white p-3 flex justify-between">
         <h1 className="font-bold">💳 Bank</h1>
-
-        <button
-          onClick={() => setOpen(!open)}
-          className="text-2xl"
-        >
-          ☰
-        </button>
-
+        <button onClick={() => setOpen(!open)}>☰</button>
       </div>
 
-      {/* 🔥 SIMPLE DROPDOWN MENU (NO SIDE SPACE) */}
-      {open && (
-        <div className="bg-blue-800 p-3 space-y-3 md:hidden">
+      {/* SIDEBAR */}
+      <div
+        className={`
+          fixed md:static top-0 left-0 h-screen bg-blue-900 text-white flex flex-col
+          transition-all duration-300 z-50
+          ${open ? "w-64" : "w-0 md:w-64 overflow-hidden"}
+        `}
+      >
 
-          <button
-            onClick={createAccount}
-            className="bg-green-500 w-full py-2 rounded"
-          >
-            {loading ? "Creating..." : "+ Create Account"}
-          </button>
+        {/* BODY */}
+        <div className="flex-1 p-4 overflow-y-auto">
 
-          <div>
-            <p className="text-sm mb-2">Accounts</p>
+          <h2 className="mb-3 font-bold">Accounts</h2>
 
-            {accounts.map((acc, i) => (
-              <div
-                key={acc._id}
-                onClick={() => selectAccount(acc._id)}
-                className="bg-blue-700 p-2 mb-2 rounded cursor-pointer"
-              >
-                Account {i + 1}
-              </div>
-            ))}
-          </div>
+          {accounts.map((acc, i) => (
+            <div
+              key={acc._id}
+              onClick={() => selectAccount(acc._id)}
+              className="bg-blue-700 p-2 mb-2 rounded cursor-pointer"
+            >
+              Account {i + 1}
+            </div>
+          ))}
 
+        </div>
+
+        {/* FOOTER */}
+        <div className="p-4 border-t border-blue-700">
           <button
             onClick={logout}
             className="bg-red-500 w-full py-2 rounded"
           >
             Logout
           </button>
-
         </div>
-      )}
 
-    </div>
+      </div>
+    </>
   );
 }
 
