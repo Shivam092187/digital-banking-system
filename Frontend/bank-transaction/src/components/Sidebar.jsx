@@ -5,9 +5,8 @@ import { useNavigate } from "react-router-dom";
 function Sidebar() {
 
   const [accounts, setAccounts] = useState([]);
-  const [loading, setLoading] = useState(false);
-
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
@@ -31,7 +30,6 @@ function Sidebar() {
     fetchAccounts();
   }, []);
 
-  // 🔥 CREATE ACCOUNT FIXED
   const createAccount = async () => {
     try {
       setLoading(true);
@@ -46,22 +44,16 @@ function Sidebar() {
 
       await fetchAccounts();
 
-      const newId = res.data.account?._id;
-      if (newId) {
-        localStorage.setItem("accountId", newId);
-      }
-
-      alert("Account Created");
+      const id = res.data.account?._id;
+      if (id) localStorage.setItem("accountId", id);
 
     } catch (err) {
-      console.log(err);
-      alert("Failed to create account");
+      alert("Failed");
     } finally {
       setLoading(false);
     }
   };
 
-  // 🔥 ACCOUNT SELECT FIXED
   const selectAccount = (id) => {
     localStorage.setItem("accountId", id);
     navigate("/dashboard");
@@ -74,12 +66,14 @@ function Sidebar() {
   };
 
   return (
-    <>
+    <div className="w-full bg-blue-900 text-white">
 
-      {/* 🔥 MOBILE TOP MENU (FIXED - NOW VISIBLE) */}
-      <div className="md:hidden bg-blue-900 text-white p-3 flex justify-between items-center">
+      {/* 🔥 TOP MENU BAR (BOTH LAPTOP + MOBILE) */}
+      <div className="flex justify-between items-center px-4 py-3 border-b border-blue-700">
 
-        <h1 className="font-bold">💳 Bank</h1>
+        <h1 className="font-bold text-lg">
+          💳 Digital Bank
+        </h1>
 
         <button
           onClick={() => setOpen(!open)}
@@ -90,89 +84,45 @@ function Sidebar() {
 
       </div>
 
-      {/* 🔥 MOBILE DROPDOWN MENU */}
-      <div className={`md:hidden bg-blue-800 text-white p-3 space-y-3 ${open ? "block" : "hidden"}`}>
-
-        {/* CREATE ACCOUNT */}
-        <button
-          onClick={createAccount}
-          className="bg-green-500 w-full py-2 rounded"
-        >
-          {loading ? "Creating..." : "+ Create Account"}
-        </button>
-
-        {/* ACCOUNTS */}
-        <div>
-          <p className="text-sm mb-2">Accounts</p>
-
-          {accounts.map((acc, i) => (
-            <div
-              key={acc._id}
-              onClick={() => selectAccount(acc._id)}
-              className="bg-blue-700 p-2 mb-2 rounded cursor-pointer"
-            >
-              Account {i + 1}
-            </div>
-          ))}
-
-        </div>
-
-        {/* LOGOUT */}
-        <button
-          onClick={logout}
-          className="bg-red-500 w-full py-2 rounded"
-        >
-          Logout
-        </button>
-
-      </div>
-
-      {/* 🔥 DESKTOP SIDEBAR */}
-      <div className="hidden md:flex flex-col fixed left-0 top-0 h-screen w-64 bg-blue-900 text-white">
-
-        <div className="p-4 border-b border-blue-700">
-          <h1 className="text-xl font-bold">💳 Digital Bank</h1>
-        </div>
-
-        <div className="flex-1 p-4 overflow-y-auto">
+      {/* 🔥 DROPDOWN MENU */}
+      {open && (
+        <div className="bg-blue-800 p-4 space-y-3">
 
           {/* CREATE ACCOUNT */}
           <button
             onClick={createAccount}
-            disabled={loading}
-            className="bg-green-500 w-full py-2 rounded mb-4"
+            className="bg-green-500 w-full py-2 rounded"
           >
             {loading ? "Creating..." : "+ Create Account"}
           </button>
 
-          <h2 className="mb-2">Accounts</h2>
+          {/* ACCOUNTS */}
+          <div>
+            <p className="text-sm mb-2">Accounts</p>
 
-          {/* ACCOUNTS LIST */}
-          {accounts.map((acc, i) => (
-            <div
-              key={acc._id}
-              onClick={() => selectAccount(acc._id)}
-              className="bg-blue-700 p-2 mb-2 rounded cursor-pointer"
-            >
-              Account {i + 1}
-            </div>
-          ))}
+            {accounts.map((acc, i) => (
+              <div
+                key={acc._id}
+                onClick={() => selectAccount(acc._id)}
+                className="bg-blue-700 p-2 mb-2 rounded cursor-pointer"
+              >
+                Account {i + 1}
+              </div>
+            ))}
+          </div>
 
-        </div>
-
-        {/* LOGOUT */}
-        <div className="p-4 border-t border-blue-700">
+          {/* LOGOUT */}
           <button
             onClick={logout}
             className="bg-red-500 w-full py-2 rounded"
           >
             Logout
           </button>
+
         </div>
+      )}
 
-      </div>
-
-    </>
+    </div>
   );
 }
 
