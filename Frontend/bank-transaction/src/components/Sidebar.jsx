@@ -57,7 +57,7 @@ function Sidebar() {
       if (res.data.account?._id) {
         localStorage.setItem("accountId", res.data.account._id);
 
-        // 🔥 trigger dashboard update
+        // 🔥 notify app
         window.dispatchEvent(new Event("accountChanged"));
       }
 
@@ -73,20 +73,20 @@ function Sidebar() {
   };
 
   /**
-   * 🔥 SELECT ACCOUNT (FIXED)
+   * 🔥 FIXED ACCOUNT SELECT (MAIN FIX)
    */
   const selectAccount = (id) => {
+
+    // store selected account
     localStorage.setItem("accountId", id);
 
-    // 🔥 IMPORTANT: notify dashboard
+    // 🔥 notify all components (Dashboard, Transfer, AddFund)
     window.dispatchEvent(new Event("accountChanged"));
 
+    // navigate only (NO reload)
     navigate("/dashboard");
   };
 
-  /**
-   * 🔥 LOGOUT
-   */
   const logout = () => {
     localStorage.clear();
     navigate("/");

@@ -4,16 +4,13 @@ import axios from "axios";
 function TransactionList() {
 
   const [transactions, setTransactions] = useState([]);
-
   const [loading, setLoading] = useState(true);
 
   const token = localStorage.getItem("token");
-
   const accountId = localStorage.getItem("accountId");
 
-
   /**
-   * 🔥 FETCH TRANSACTIONS
+   * 🔥 FETCH TRANSACTIONS (FIXED)
    */
   const fetchTransactions = async () => {
 
@@ -22,7 +19,7 @@ function TransactionList() {
       setLoading(true);
 
       const res = await axios.get(
-        "http://localhost:3000/api/transactions",
+        "https://digital-banking-system-1.onrender.com/api/transactions",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -30,35 +27,39 @@ function TransactionList() {
         }
       );
 
-      console.log("TRANSACTIONS:", res.data);
-
-      setTransactions(
-        res.data.transactions || []
-      );
+      setTransactions(res.data.transactions || []);
 
     } catch (err) {
-
-      console.log(
-        err.response?.data || err.message
-      );
+      console.log(err.response?.data || err.message);
+      setTransactions([]);
 
     } finally {
-
       setLoading(false);
-
     }
   };
 
 
+  /**
+   * 🔥 AUTO REFRESH FIX (ACCOUNT CHANGE SUPPORT)
+   */
   useEffect(() => {
 
     fetchTransactions();
+
+    const handleChange = () => {
+      fetchTransactions();
+    };
+
+    window.addEventListener("accountChanged", handleChange);
+
+    return () => {
+      window.removeEventListener("accountChanged", handleChange);
+    };
 
   }, []);
 
 
   return (
-
     <div className="bg-white p-6 rounded-2xl shadow-md">
 
       {/* TITLE */}
@@ -77,28 +78,21 @@ function TransactionList() {
 
       </div>
 
-
       {/* LOADING */}
       {loading && (
-
         <div className="text-gray-500">
           Loading transactions...
         </div>
-
       )}
-
 
       {/* EMPTY */}
       {!loading && transactions.length === 0 && (
-
         <div className="bg-gray-100 p-4 rounded-lg text-gray-500">
           No Transactions Found
         </div>
-
       )}
 
-
-      {/* TRANSACTION LIST */}
+      {/* LIST */}
       <div className="space-y-4">
 
         {transactions.map((txn) => {
@@ -107,7 +101,6 @@ function TransactionList() {
             txn.fromAccount === accountId;
 
           return (
-
             <div
               key={txn._id}
               className="border border-gray-200 rounded-xl p-4"
@@ -117,60 +110,44 @@ function TransactionList() {
               <div className="flex items-center justify-between mb-3">
 
                 <div>
-
                   <p className="font-bold text-gray-800">
                     {txn.type}
                   </p>
 
                   <p className="text-xs text-gray-500">
-                    {new Date(
-                      txn.createdAt
-                    ).toLocaleString()}
+                    {new Date(txn.createdAt).toLocaleString()}
                   </p>
-
                 </div>
 
                 <div
                   className={`font-bold text-lg ${
-                    isDebit
-                      ? "text-red-600"
-                      : "text-green-600"
+                    isDebit ? "text-red-600" : "text-green-600"
                   }`}
                 >
-                  {isDebit ? "-" : "+"} ₹
-                  {txn.amount}
+                  {isDebit ? "-" : "+"} ₹{txn.amount}
                 </div>
 
               </div>
-
 
               {/* DETAILS */}
               <div className="text-sm space-y-2">
 
                 <div>
-                  <span className="font-semibold">
-                    From:
-                  </span>
-
+                  <span className="font-semibold">From:</span>
                   <p className="break-all text-gray-600">
                     {txn.fromAccount}
                   </p>
                 </div>
 
                 <div>
-                  <span className="font-semibold">
-                    To:
-                  </span>
-
+                  <span className="font-semibold">To:</span>
                   <p className="break-all text-gray-600">
                     {txn.toAccount}
                   </p>
                 </div>
 
                 <div>
-                  <span className="font-semibold">
-                    Status:
-                  </span>
+                  <span className="font-semibold">Status:</span>
 
                   <span
                     className={`ml-2 px-2 py-1 rounded text-xs ${
@@ -181,12 +158,12 @@ function TransactionList() {
                   >
                     {txn.status}
                   </span>
+
                 </div>
 
               </div>
 
             </div>
-
           );
         })}
 

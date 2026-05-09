@@ -10,22 +10,26 @@ function Dashboard() {
 
   const [balance, setBalance] = useState(0);
 
-  const accountId = localStorage.getItem("accountId");
+  // 🔥 reactive accountId (IMPORTANT FIX)
+  const [accountId, setAccountId] = useState(
+    localStorage.getItem("accountId")
+  );
+
   const token = localStorage.getItem("token");
 
   /**
-   * 🔥 FETCH BALANCE (FIXED)
+   * 🔥 FETCH BALANCE
    */
-  const fetchBalance = async () => {
+  const fetchBalance = async (id = accountId) => {
     try {
 
-      if (!accountId) {
+      if (!id) {
         setBalance(0);
         return;
       }
 
       const res = await axios.get(
-        `https://digital-banking-system-1.onrender.com/api/accounts/balance/${accountId}`,
+        `https://digital-banking-system-1.onrender.com/api/accounts/balance/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -42,22 +46,31 @@ function Dashboard() {
   };
 
   /**
-   * 🔥 INITIAL + SYNC FIX
+   * 🔥 ACCOUNT CHANGE LISTENER (MAIN FIX)
    */
   useEffect(() => {
-    fetchBalance();
 
-    // 🔥 listen sidebar updates
-    const handleChange = () => {
-      fetchBalance();
+    const handler = () => {
+      const newAccountId = localStorage.getItem("accountId");
+
+      setAccountId(newAccountId);
+
+      fetchBalance(newAccountId);
     };
 
-    window.addEventListener("accountChanged", handleChange);
+    window.addEventListener("accountChanged", handler);
 
     return () => {
-      window.removeEventListener("accountChanged", handleChange);
+      window.removeEventListener("accountChanged", handler);
     };
 
+  }, []);
+
+  /**
+   * 🔥 INITIAL LOAD
+   */
+  useEffect(() => {
+    fetchBalance(accountId);
   }, [accountId]);
 
 
@@ -87,7 +100,7 @@ function Dashboard() {
 
         </div>
 
-        {/* BALANCE CARD */}
+        {/* BALANCE */}
         <div className="bg-blue-600 text-white rounded-xl p-6 shadow mb-6">
 
           <h2 className="text-lg">
@@ -103,14 +116,16 @@ function Dashboard() {
         {/* ACTIONS */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
 
+          {/* ADD FUND */}
           <AddFund
             accountId={accountId}
-            onSuccess={fetchBalance}
+            onSuccess={() => fetchBalance(accountId)}
           />
 
+          {/* TRANSFER */}
           <Transfer
             accountId={accountId}
-            onSuccess={fetchBalance}
+            onSuccess={() => fetchBalance(accountId)}
           />
 
         </div>
