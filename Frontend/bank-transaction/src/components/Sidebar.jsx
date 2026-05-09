@@ -6,7 +6,6 @@ function Sidebar() {
 
   const [accounts, setAccounts] = useState([]);
   const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
@@ -30,30 +29,7 @@ function Sidebar() {
     fetchAccounts();
   }, []);
 
-  const createAccount = async () => {
-    try {
-      setLoading(true);
-
-      const res = await axios.post(
-        "https://digital-banking-system-1.onrender.com/api/accounts",
-        {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      await fetchAccounts();
-
-      const id = res.data.account?._id;
-      if (id) localStorage.setItem("accountId", id);
-
-    } catch (err) {
-      alert("Failed");
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // 🔥 SELECT REAL ACCOUNT ID
   const selectAccount = (id) => {
     localStorage.setItem("accountId", id);
     navigate("/dashboard");
@@ -68,12 +44,10 @@ function Sidebar() {
   return (
     <div className="w-full bg-blue-900 text-white">
 
-      {/* 🔥 TOP MENU BAR (BOTH LAPTOP + MOBILE) */}
+      {/* 🔥 TOP BAR (LAPTOP + MOBILE SAME) */}
       <div className="flex justify-between items-center px-4 py-3 border-b border-blue-700">
 
-        <h1 className="font-bold text-lg">
-          💳 Digital Bank
-        </h1>
+        <h1 className="font-bold">💳 Digital Bank</h1>
 
         <button
           onClick={() => setOpen(!open)}
@@ -88,33 +62,31 @@ function Sidebar() {
       {open && (
         <div className="bg-blue-800 p-4 space-y-3">
 
-          {/* CREATE ACCOUNT */}
-          <button
-            onClick={createAccount}
-            className="bg-green-500 w-full py-2 rounded"
-          >
-            {loading ? "Creating..." : "+ Create Account"}
-          </button>
+          <h2 className="text-sm font-semibold mb-2">
+            Your Accounts
+          </h2>
 
-          {/* ACCOUNTS */}
-          <div>
-            <p className="text-sm mb-2">Accounts</p>
+          {/* 🔥 REAL ACCOUNT ID SHOW */}
+          {accounts.length === 0 && (
+            <p className="text-sm text-gray-300">
+              No accounts found
+            </p>
+          )}
 
-            {accounts.map((acc, i) => (
-              <div
-                key={acc._id}
-                onClick={() => selectAccount(acc._id)}
-                className="bg-blue-700 p-2 mb-2 rounded cursor-pointer"
-              >
-                Account {i + 1}
-              </div>
-            ))}
-          </div>
+          {accounts.map((acc) => (
+            <div
+              key={acc._id}
+              onClick={() => selectAccount(acc._id)}
+              className="bg-blue-700 p-2 rounded cursor-pointer break-all"
+            >
+              {acc._id}
+            </div>
+          ))}
 
           {/* LOGOUT */}
           <button
             onClick={logout}
-            className="bg-red-500 w-full py-2 rounded"
+            className="bg-red-500 w-full py-2 rounded mt-3"
           >
             Logout
           </button>
