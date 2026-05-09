@@ -3,18 +3,25 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 function CreateAccount() {
+
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
   const handleCreate = async () => {
     try {
+
+      if (!name.trim()) {
+        return alert("Please enter account name");
+      }
+
       setLoading(true);
 
       const token = localStorage.getItem("token");
 
       const res = await axios.post(
-        "http://localhost:3000/api/accounts",
+        "https://digital-banking-system-1.onrender.com/api/accounts",
         { name },
         {
           headers: {
@@ -27,20 +34,25 @@ function CreateAccount() {
 
       const account = res.data.account;
 
-      if (!account?._id) {
-        alert("Account ID not returned");
-        return;
+      if (!account || !account._id) {
+        return alert("Account ID not returned from server");
       }
 
       localStorage.setItem("accountId", account._id);
 
-      alert("Account Created");
+      alert("Account Created Successfully");
 
       navigate("/dashboard");
 
     } catch (err) {
-      console.log(err);
-      alert("Error creating account");
+
+      console.log(err.response?.data || err.message);
+
+      alert(
+        err.response?.data?.message ||
+        "Error creating account"
+      );
+
     } finally {
       setLoading(false);
     }

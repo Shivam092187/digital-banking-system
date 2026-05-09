@@ -3,16 +3,27 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 
 function Register() {
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const handleRegister = async () => {
     try {
+
+      // 🔥 VALIDATION
+      if (!name.trim() || !email.trim() || !password.trim()) {
+        return alert("All fields are required");
+      }
+
+      setLoading(true);
+
       const res = await axios.post(
-        "http://localhost:3000/api/auth/register",
+        "https://digital-banking-system-1.onrender.com/api/auth/register",
         {
           name,
           email,
@@ -27,12 +38,16 @@ function Register() {
       navigate("/");
 
     } catch (err) {
+
       console.log(err.response?.data || err.message);
 
       alert(
         err.response?.data?.message ||
         "Register failed"
       );
+
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -69,9 +84,10 @@ function Register() {
 
         <button
           onClick={handleRegister}
+          disabled={loading}
           className="bg-green-600 text-white w-full py-2"
         >
-          Register
+          {loading ? "Registering..." : "Register"}
         </button>
 
         {/* 🔥 LOGIN LINK */}

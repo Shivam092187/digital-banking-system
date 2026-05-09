@@ -4,25 +4,19 @@ import axios from "axios";
 function Transfer({ accountId, onSuccess }) {
 
   const [accounts, setAccounts] = useState([]);
-
   const [toAccount, setToAccount] = useState("");
-
   const [amount, setAmount] = useState("");
-
   const [loading, setLoading] = useState(false);
 
   const token = localStorage.getItem("token");
 
-
   /**
-   * 🔥 FETCH ALL ACCOUNTS
+   * 🔥 FETCH ALL ACCOUNTS (FIXED)
    */
   const fetchAccounts = async () => {
-
     try {
-
       const res = await axios.get(
-        "http://localhost:3000/api/accounts/all",
+        "https://digital-banking-system-1.onrender.com/api/accounts/all",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -35,36 +29,20 @@ function Transfer({ accountId, onSuccess }) {
       setAccounts(res.data.accounts || []);
 
     } catch (err) {
-
-      console.log(
-        err.response?.data || err.message
-      );
-
+      console.log(err.response?.data || err.message);
     }
   };
 
-
   useEffect(() => {
-
     fetchAccounts();
-
   }, []);
-
 
   /**
    * 🔥 HANDLE TRANSFER
    */
   const handleTransfer = async () => {
-
     try {
 
-      console.log("FROM:", accountId);
-
-      console.log("TO:", toAccount);
-
-      console.log("AMOUNT:", amount);
-
-      // 🔥 VALIDATION
       if (!accountId) {
         return alert("Please select sender account");
       }
@@ -77,14 +55,17 @@ function Transfer({ accountId, onSuccess }) {
         return alert("Please enter valid amount");
       }
 
+      if (accountId === toAccount) {
+        return alert("Sender and Receiver cannot be same");
+      }
+
       setLoading(true);
 
-      // 🔥 API CALL
       const res = await axios.post(
-        "http://localhost:3000/api/transactions",
+        "https://digital-banking-system-1.onrender.com/api/transactions",
         {
           fromAccount: accountId,
-          toAccount: toAccount,
+          toAccount,
           amount: Number(amount),
           idempotencyKey: `TXN-${Date.now()}`
         },
@@ -97,27 +78,17 @@ function Transfer({ accountId, onSuccess }) {
 
       console.log("TRANSFER RESPONSE:", res.data);
 
-      alert(
-        res.data.message ||
-        "Transfer Successful"
-      );
+      alert(res.data.message || "Transfer Successful");
 
-      // 🔥 RESET
       setAmount("");
-
       setToAccount("");
 
-      // 🔥 REFRESH BALANCE
       if (onSuccess) {
         onSuccess();
       }
 
     } catch (err) {
-
-      console.log(
-        "TRANSFER ERROR:",
-        err.response?.data || err.message
-      );
+      console.log(err.response?.data || err.message);
 
       alert(
         err.response?.data?.message ||
@@ -125,26 +96,19 @@ function Transfer({ accountId, onSuccess }) {
       );
 
     } finally {
-
       setLoading(false);
-
     }
   };
 
-
   return (
-
     <div className="bg-white p-6 rounded-2xl shadow-md">
 
-      {/* TITLE */}
       <h2 className="text-2xl font-bold text-gray-800 mb-5">
         💸 Transfer Money
       </h2>
 
-
-      {/* SENDER ACCOUNT */}
+      {/* SENDER */}
       <div className="mb-4">
-
         <p className="text-sm text-gray-500 mb-1">
           Sender Account
         </p>
@@ -152,13 +116,10 @@ function Transfer({ accountId, onSuccess }) {
         <div className="bg-gray-100 p-3 rounded-lg text-sm break-all font-medium text-blue-700">
           {accountId || "No Account Selected"}
         </div>
-
       </div>
 
-
-      {/* RECEIVER ACCOUNT */}
+      {/* RECEIVER */}
       <div className="mb-4">
-
         <p className="text-sm text-gray-500 mb-1">
           Select Receiver Account
         </p>
@@ -168,7 +129,6 @@ function Transfer({ accountId, onSuccess }) {
           onChange={(e) => setToAccount(e.target.value)}
           className="w-full border border-gray-300 p-3 rounded-lg outline-none"
         >
-
           <option value="">
             Select Receiver
           </option>
@@ -176,24 +136,15 @@ function Transfer({ accountId, onSuccess }) {
           {accounts
             .filter((acc) => acc._id !== accountId)
             .map((acc) => (
-
-              <option
-                key={acc._id}
-                value={acc._id}
-              >
+              <option key={acc._id} value={acc._id}>
                 {acc._id}
               </option>
-
             ))}
-
         </select>
-
       </div>
-
 
       {/* AMOUNT */}
       <div className="mb-5">
-
         <p className="text-sm text-gray-500 mb-1">
           Amount
         </p>
@@ -205,9 +156,7 @@ function Transfer({ accountId, onSuccess }) {
           onChange={(e) => setAmount(e.target.value)}
           className="w-full border border-gray-300 p-3 rounded-lg outline-none"
         />
-
       </div>
-
 
       {/* BUTTON */}
       <button
@@ -215,9 +164,7 @@ function Transfer({ accountId, onSuccess }) {
         disabled={loading}
         className="w-full bg-blue-600 hover:bg-blue-700 transition text-white py-3 rounded-lg font-semibold"
       >
-        {loading
-          ? "Processing..."
-          : "Transfer Money"}
+        {loading ? "Processing..." : "Transfer Money"}
       </button>
 
     </div>
