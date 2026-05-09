@@ -11,7 +11,7 @@ function Login() {
   const loginUser = async () => {
     try {
       const res = await axios.post(
-        "http://localhost:3000/api/auth/login",
+        "https://digital-banking-system-1.onrender.com/api/auth/login",
         {
           email,
           password,
@@ -73,13 +73,9 @@ function Login() {
           Login
         </button>
 
-        {/* 🔥 REGISTER LINK */}
         <p className="text-sm mt-4 text-center">
           Don't have an account?{" "}
-          <Link
-            to="/register"
-            className="text-blue-600 underline"
-          >
+          <Link to="/register" className="text-blue-600 underline">
             Register
           </Link>
         </p>
