@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-
 import Sidebar from "../components/Sidebar";
 import AddFund from "../components/AddFund";
 import Transfer from "../components/Transfer";
@@ -20,9 +19,7 @@ function Dashboard() {
       const res = await axios.get(
         `https://digital-banking-system-1.onrender.com/api/accounts/balance/${accountId}`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
 
@@ -40,54 +37,34 @@ function Dashboard() {
   return (
     <div className="flex min-h-screen bg-gray-100">
 
-      {/* SIDEBAR */}
+      {/* DESKTOP SIDEBAR ONLY */}
       <Sidebar />
 
-      {/* MAIN CONTENT (NO ml-64 = FIXED GAP ISSUE) */}
-      <div className="flex-1 p-4 md:p-6">
+      {/* MAIN CONTENT (NO GAP FIX) */}
+      <div className="flex-1 md:ml-64 p-4">
 
-        {/* HEADER */}
-        <div className="bg-white rounded-xl shadow p-5 mb-6">
-
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
-            Digital Banking Dashboard
-          </h1>
-
-          <p className="text-gray-500 mt-2">
-            Selected Account:
-          </p>
-
-          <p className="font-semibold text-blue-700 break-all">
-            {accountId || "No Account Selected"}
-          </p>
-
+        {/* MOBILE TOP BAR ONLY (NO SIDEBAR) */}
+        <div className="md:hidden bg-white p-3 shadow mb-4">
+          <h1 className="font-bold">Digital Bank Dashboard</h1>
+          <p className="text-sm break-all">{accountId}</p>
         </div>
 
         {/* BALANCE */}
-        <div className="bg-blue-600 text-white rounded-xl p-6 shadow mb-6">
-
-          <h2 className="text-lg">Current Balance</h2>
-
-          <p className="text-3xl md:text-4xl font-bold mt-2">
-            ₹ {balance}
-          </p>
-
+        <div className="bg-blue-600 text-white p-6 rounded mb-4">
+          <h2>Current Balance</h2>
+          <h1 className="text-3xl font-bold">₹ {balance}</h1>
         </div>
 
         {/* ACTIONS */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-
+        <div className="grid md:grid-cols-2 gap-4 mb-4">
           <AddFund accountId={accountId} onSuccess={fetchBalance} />
-
           <Transfer accountId={accountId} onSuccess={fetchBalance} />
-
         </div>
 
         {/* TRANSACTIONS */}
         <TransactionList />
 
       </div>
-
     </div>
   );
 }
