@@ -10,21 +10,18 @@ function Dashboard() {
 
   const [balance, setBalance] = useState(0);
 
-  // 🔥 SELECTED ACCOUNT
   const accountId = localStorage.getItem("accountId");
-
   const token = localStorage.getItem("token");
 
-
-  // 🔥 FETCH BALANCE
+  /**
+   * 🔥 FETCH BALANCE (FIXED FOR PRODUCTION)
+   */
   const fetchBalance = async () => {
-
     try {
-
       if (!accountId) return;
 
       const res = await axios.get(
-        `http://localhost:3000/api/accounts/balance/${accountId}`,
+        `https://digital-banking-system-1.onrender.com/api/accounts/balance/${accountId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -32,22 +29,21 @@ function Dashboard() {
         }
       );
 
-      setBalance(res.data.balance);
+      console.log("BALANCE RESPONSE:", res.data);
+
+      setBalance(res.data.balance || 0);
 
     } catch (err) {
-
-      console.log(err);
-
+      console.log(err.response?.data || err.message);
     }
   };
 
-
+  /**
+   * 🔥 AUTO REFRESH BALANCE
+   */
   useEffect(() => {
-
     fetchBalance();
-
   }, [accountId]);
-
 
   return (
     <div className="flex bg-gray-100 min-h-screen">
@@ -75,7 +71,6 @@ function Dashboard() {
 
         </div>
 
-
         {/* BALANCE CARD */}
         <div className="bg-blue-600 text-white rounded-xl p-6 shadow mb-6">
 
@@ -88,7 +83,6 @@ function Dashboard() {
           </p>
 
         </div>
-
 
         {/* ACTIONS */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -106,7 +100,6 @@ function Dashboard() {
           />
 
         </div>
-
 
         {/* TRANSACTIONS */}
         <TransactionList />

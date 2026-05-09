@@ -8,10 +8,11 @@ function Sidebar() {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+
   const token = localStorage.getItem("token");
 
   /**
-   * 🔥 FETCH ACCOUNTS (FIXED)
+   * 🔥 FETCH ACCOUNTS
    */
   const fetchAccounts = async () => {
     try {
@@ -38,7 +39,7 @@ function Sidebar() {
   }, []);
 
   /**
-   * 🔥 CREATE ACCOUNT (FIXED)
+   * 🔥 CREATE ACCOUNT (FIXED - NO RELOAD)
    */
   const createAccount = async () => {
     try {
@@ -64,7 +65,7 @@ function Sidebar() {
 
       alert("Account Created Successfully");
 
-      window.location.reload();
+      // ❌ window.location.reload() removed
 
     } catch (err) {
       console.log(err.response?.data || err.message);
@@ -80,12 +81,11 @@ function Sidebar() {
   };
 
   /**
-   * 🔥 SELECT ACCOUNT
+   * 🔥 SELECT ACCOUNT (FIXED - NO RELOAD)
    */
   const selectAccount = (id) => {
     localStorage.setItem("accountId", id);
     navigate("/dashboard");
-    window.location.reload();
   };
 
   /**
