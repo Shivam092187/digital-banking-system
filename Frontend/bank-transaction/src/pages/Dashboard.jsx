@@ -14,11 +14,15 @@ function Dashboard() {
   const token = localStorage.getItem("token");
 
   /**
-   * 🔥 FETCH BALANCE (FIXED FOR PRODUCTION)
+   * 🔥 FETCH BALANCE (FIXED)
    */
   const fetchBalance = async () => {
     try {
-      if (!accountId) return;
+
+      if (!accountId) {
+        setBalance(0);
+        return;
+      }
 
       const res = await axios.get(
         `https://digital-banking-system-1.onrender.com/api/accounts/balance/${accountId}`,
@@ -29,21 +33,33 @@ function Dashboard() {
         }
       );
 
-      console.log("BALANCE RESPONSE:", res.data);
-
       setBalance(res.data.balance || 0);
 
     } catch (err) {
       console.log(err.response?.data || err.message);
+      setBalance(0);
     }
   };
 
   /**
-   * 🔥 AUTO REFRESH BALANCE
+   * 🔥 INITIAL + SYNC FIX
    */
   useEffect(() => {
     fetchBalance();
+
+    // 🔥 listen sidebar updates
+    const handleChange = () => {
+      fetchBalance();
+    };
+
+    window.addEventListener("accountChanged", handleChange);
+
+    return () => {
+      window.removeEventListener("accountChanged", handleChange);
+    };
+
   }, [accountId]);
+
 
   return (
     <div className="flex bg-gray-100 min-h-screen">
@@ -87,13 +103,11 @@ function Dashboard() {
         {/* ACTIONS */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
 
-          {/* ADD FUND */}
           <AddFund
             accountId={accountId}
             onSuccess={fetchBalance}
           />
 
-          {/* TRANSFER */}
           <Transfer
             accountId={accountId}
             onSuccess={fetchBalance}
@@ -105,7 +119,6 @@ function Dashboard() {
         <TransactionList />
 
       </div>
-
     </div>
   );
 }

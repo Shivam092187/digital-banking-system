@@ -8,7 +8,6 @@ function Sidebar() {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-
   const token = localStorage.getItem("token");
 
   /**
@@ -25,8 +24,6 @@ function Sidebar() {
         }
       );
 
-      console.log("FETCHED ACCOUNTS:", res.data);
-
       setAccounts(res.data.accounts || []);
 
     } catch (err) {
@@ -39,7 +36,7 @@ function Sidebar() {
   }, []);
 
   /**
-   * 🔥 CREATE ACCOUNT (FIXED - NO RELOAD)
+   * 🔥 CREATE ACCOUNT
    */
   const createAccount = async () => {
     try {
@@ -55,25 +52,20 @@ function Sidebar() {
         }
       );
 
-      console.log("CREATED ACCOUNT:", res.data);
-
       await fetchAccounts();
 
       if (res.data.account?._id) {
         localStorage.setItem("accountId", res.data.account._id);
+
+        // 🔥 trigger dashboard update
+        window.dispatchEvent(new Event("accountChanged"));
       }
 
       alert("Account Created Successfully");
 
-      // ❌ window.location.reload() removed
-
     } catch (err) {
       console.log(err.response?.data || err.message);
-
-      alert(
-        err.response?.data?.message ||
-        "Account creation failed"
-      );
+      alert(err.response?.data?.message || "Account creation failed");
 
     } finally {
       setLoading(false);
@@ -81,10 +73,14 @@ function Sidebar() {
   };
 
   /**
-   * 🔥 SELECT ACCOUNT (FIXED - NO RELOAD)
+   * 🔥 SELECT ACCOUNT (FIXED)
    */
   const selectAccount = (id) => {
     localStorage.setItem("accountId", id);
+
+    // 🔥 IMPORTANT: notify dashboard
+    window.dispatchEvent(new Event("accountChanged"));
+
     navigate("/dashboard");
   };
 
