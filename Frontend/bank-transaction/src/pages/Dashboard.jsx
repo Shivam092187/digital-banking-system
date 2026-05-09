@@ -10,6 +10,7 @@ function Dashboard() {
 
   const [balance, setBalance] = useState(0);
   const [accountId, setAccountId] = useState(localStorage.getItem("accountId"));
+  const [open, setOpen] = useState(false);
 
   const token = localStorage.getItem("token");
 
@@ -49,19 +50,26 @@ function Dashboard() {
     fetchBalance(accountId);
   }, [accountId]);
 
-
   return (
     <div className="flex bg-gray-100 min-h-screen">
 
       {/* SIDEBAR */}
-      <Sidebar />
+      <Sidebar open={open} setOpen={setOpen} />
 
-      {/* MAIN CONTENT (🔥 FIXED HERE) */}
-      <div className="flex-1 p-6">
+      {/* MAIN CONTENT (🔥 NO GAP FIX FINAL) */}
+      <div className="flex-1 p-6 md:ml-64">
+
+        {/* MOBILE MENU */}
+        <button
+          className="md:hidden bg-blue-600 text-white px-3 py-2 rounded mb-4"
+          onClick={() => setOpen(true)}
+        >
+          ☰ Menu
+        </button>
 
         {/* HEADER */}
-        <div className="bg-white rounded-xl shadow p-5 mb-6">
-          <h1 className="text-3xl font-bold">
+        <div className="bg-white p-5 rounded shadow mb-6">
+          <h1 className="text-2xl font-bold">
             Digital Banking Dashboard
           </h1>
 
@@ -71,11 +79,9 @@ function Dashboard() {
         </div>
 
         {/* BALANCE */}
-        <div className="bg-blue-600 text-white rounded-xl p-6 mb-6">
+        <div className="bg-blue-600 text-white p-6 rounded mb-6">
           <h2>Current Balance</h2>
-          <p className="text-4xl font-bold mt-2">
-            ₹ {balance}
-          </p>
+          <p className="text-4xl font-bold">₹ {balance}</p>
         </div>
 
         {/* ACTIONS */}

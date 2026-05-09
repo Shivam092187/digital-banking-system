@@ -21,7 +21,7 @@ function Sidebar({ open, setOpen }) {
 
       setAccounts(res.data.accounts || []);
     } catch (err) {
-      console.log(err.response?.data || err.message);
+      console.log(err.message);
     }
   };
 
@@ -46,10 +46,10 @@ function Sidebar({ open, setOpen }) {
         window.dispatchEvent(new Event("accountChanged"));
       }
 
-      alert("Account Created Successfully");
+      alert("Account Created");
 
     } catch (err) {
-      alert(err.response?.data?.message || "Account creation failed");
+      alert("Failed");
     } finally {
       setLoading(false);
     }
@@ -59,12 +59,7 @@ function Sidebar({ open, setOpen }) {
     localStorage.setItem("accountId", id);
     window.dispatchEvent(new Event("accountChanged"));
     navigate("/dashboard");
-    setOpen(false); // 🔥 CLOSE DRAWER ON MOBILE
-  };
-
-  const logout = () => {
-    localStorage.clear();
-    navigate("/");
+    setOpen(false);
   };
 
   return (
@@ -80,21 +75,12 @@ function Sidebar({ open, setOpen }) {
       {/* SIDEBAR */}
       <div
         className={`
-          fixed top-0 left-0 h-screen w-64 bg-blue-900 text-white flex flex-col z-50
+          fixed top-0 left-0 w-64 h-screen bg-blue-900 text-white flex flex-col z-50
           transform transition-transform duration-300
-
           ${open ? "translate-x-0" : "-translate-x-full"}
-
           md:translate-x-0 md:static md:flex
         `}
       >
-
-        {/* CLOSE BUTTON (mobile only) */}
-        <div className="md:hidden flex justify-end p-3">
-          <button onClick={() => setOpen(false)} className="text-xl">
-            ✕
-          </button>
-        </div>
 
         {/* HEADER */}
         <div className="p-5 border-b border-blue-700">
@@ -107,49 +93,25 @@ function Sidebar({ open, setOpen }) {
           <button
             onClick={createAccount}
             disabled={loading}
-            className="bg-green-500 hover:bg-green-600 w-full py-3 rounded-lg mb-5 font-semibold"
+            className="bg-green-500 w-full py-3 rounded mb-5"
           >
             {loading ? "Creating..." : "+ Create Account"}
           </button>
 
-          <h2 className="mb-3 text-sm font-bold text-gray-200">
-            Your Accounts
-          </h2>
-
           <div className="space-y-3">
 
-            {accounts.length === 0 && (
-              <div className="bg-blue-800 p-3 rounded text-sm">
-                No Accounts Found
-              </div>
-            )}
-
-            {accounts.map((acc, index) => (
+            {accounts.map((acc, i) => (
               <div
                 key={acc._id}
                 onClick={() => selectAccount(acc._id)}
-                className="bg-blue-700 hover:bg-blue-600 transition p-3 rounded-lg cursor-pointer"
+                className="bg-blue-700 p-3 rounded cursor-pointer"
               >
-                <p className="text-xs text-gray-200">
-                  Account #{index + 1}
-                </p>
-                <p className="font-semibold text-sm break-all">
-                  {acc._id}
-                </p>
+                <p className="text-xs">Account #{i + 1}</p>
+                <p className="break-all text-sm">{acc._id}</p>
               </div>
             ))}
 
           </div>
-        </div>
-
-        {/* FOOTER */}
-        <div className="p-4 border-t border-blue-700">
-          <button
-            onClick={logout}
-            className="bg-red-500 hover:bg-red-600 w-full py-3 rounded-lg font-semibold"
-          >
-            Logout
-          </button>
         </div>
 
       </div>
