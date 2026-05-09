@@ -10,7 +10,6 @@ function Dashboard() {
 
   const [balance, setBalance] = useState(0);
   const [accountId, setAccountId] = useState(localStorage.getItem("accountId"));
-  const [open, setOpen] = useState(false);
 
   const token = localStorage.getItem("token");
 
@@ -54,18 +53,10 @@ function Dashboard() {
     <div className="flex bg-gray-100 min-h-screen">
 
       {/* SIDEBAR */}
-      <Sidebar open={open} setOpen={setOpen} />
+      <Sidebar />
 
-      {/* MAIN CONTENT (🔥 NO GAP FIX FINAL) */}
-      <div className="flex-1 p-6 md:ml-64">
-
-        {/* MOBILE MENU */}
-        <button
-          className="md:hidden bg-blue-600 text-white px-3 py-2 rounded mb-4"
-          onClick={() => setOpen(true)}
-        >
-          ☰ Menu
-        </button>
+      {/* MAIN CONTENT (🔥 FINAL FIX) */}
+      <div className="flex-1 p-6 md:pl-64">
 
         {/* HEADER */}
         <div className="bg-white p-5 rounded shadow mb-6">
