@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 function Login() {
   const navigate = useNavigate();
@@ -10,7 +10,6 @@ function Login() {
 
   const loginUser = async () => {
     try {
-
       const res = await axios.post(
         "http://localhost:3000/api/auth/login",
         {
@@ -21,10 +20,8 @@ function Login() {
 
       console.log("LOGIN RESPONSE:", res.data);
 
-      // 🔥 SAVE TOKEN
       localStorage.setItem("token", res.data.token);
 
-      // 🔥 SAVE USER
       localStorage.setItem(
         "user",
         JSON.stringify(res.data.user)
@@ -35,7 +32,6 @@ function Login() {
       navigate("/dashboard");
 
     } catch (err) {
-
       console.log(err.response?.data || err.message);
 
       alert(
@@ -76,6 +72,17 @@ function Login() {
         >
           Login
         </button>
+
+        {/* 🔥 REGISTER LINK */}
+        <p className="text-sm mt-4 text-center">
+          Don't have an account?{" "}
+          <Link
+            to="/register"
+            className="text-blue-600 underline"
+          >
+            Register
+          </Link>
+        </p>
 
       </div>
 
