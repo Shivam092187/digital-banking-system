@@ -1,7 +1,13 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:3000/api",
+
+  // 🔥 LIVE BACKEND
+  baseURL: "https://digital-banking-system-1.onrender.com/api",
+
+  // 🔥 IMPORTANT
+  withCredentials: true,
+
 });
 
 export default API;
