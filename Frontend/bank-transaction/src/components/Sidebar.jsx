@@ -3,7 +3,6 @@ import axios from "axios";
 
 function Sidebar() {
   const [accounts, setAccounts] = useState([]);
-  const [open, setOpen] = useState(false);
 
   const token = localStorage.getItem("token");
 
@@ -70,10 +69,6 @@ function Sidebar() {
             + Create Account
           </button>
 
-          <h2 className="text-sm font-semibold mt-2">
-            Your Accounts
-          </h2>
-
           {accounts.map((acc) => (
             <div
               key={acc._id}
@@ -90,56 +85,23 @@ function Sidebar() {
           >
             Logout
           </button>
+
         </div>
       </div>
 
       {/* ================= MOBILE TOP BAR ONLY ================= */}
-      <div className="md:hidden w-full bg-blue-900 text-white">
+      <div className="md:hidden w-full bg-blue-900 text-white flex justify-between items-center px-4 py-3">
 
-        <div className="flex justify-between items-center px-4 py-3 border-b border-blue-700">
+        <h1 className="font-bold">💳 Digital Bank</h1>
 
-          <h1 className="font-bold">💳 Digital Bank</h1>
+        {/* 🔥 ONLY HAMBURGER ICON */}
+        <button
+          className="text-2xl"
+          onClick={() => {}}
+        >
+          ☰
+        </button>
 
-          {/* 🔥 RIGHT SIDE ARROW ONLY */}
-          <button
-            onClick={() => setOpen(!open)}
-            className="text-xl"
-          >
-            {open ? "▲" : "▼"}
-          </button>
-
-        </div>
-
-        {/* 🔥 SMALL DROPDOWN UNDER TOP BAR */}
-        {open && (
-          <div className="bg-blue-800 p-3 space-y-2">
-
-            <button
-              onClick={createAccount}
-              className="bg-green-500 w-full py-1 rounded"
-            >
-              + Create Account
-            </button>
-
-            {accounts.slice(0, 4).map((acc) => (
-              <div
-                key={acc._id}
-                onClick={() => selectAccount(acc._id)}
-                className="bg-blue-700 p-1 rounded text-sm break-all"
-              >
-                {acc._id}
-              </div>
-            ))}
-
-            <button
-              onClick={logout}
-              className="bg-red-500 w-full py-1 rounded"
-            >
-              Logout
-            </button>
-
-          </div>
-        )}
       </div>
     </>
   );
