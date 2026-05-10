@@ -12,7 +12,7 @@ function Dashboard() {
 
   const token = localStorage.getItem("token");
 
-  // 🔥 ALWAYS SYNC ACCOUNT (IMPORTANT FIX)
+  // 🔥 IMPROVED SYNC (FIXED)
   useEffect(() => {
     const syncAccount = () => {
       const id = localStorage.getItem("accountId");
@@ -20,9 +20,13 @@ function Dashboard() {
     };
 
     syncAccount();
-    window.addEventListener("storage", syncAccount);
 
-    return () => window.removeEventListener("storage", syncAccount);
+    // 🔥 FIX: also listen focus (same tab issue fix)
+    window.addEventListener("focus", syncAccount);
+
+    return () => {
+      window.removeEventListener("focus", syncAccount);
+    };
   }, []);
 
   const fetchBalance = async (id) => {
@@ -61,15 +65,14 @@ function Dashboard() {
         <Sidebar />
       </div>
 
-      {/* MAIN CONTENT */}
+      {/* MAIN */}
       <div className="flex-1 md:ml-64 ml-0 p-4">
 
-        {/* 🔥 TOP BAR */}
+        {/* TOP BAR */}
         <div className="flex justify-between items-center bg-white p-3 shadow mb-4">
 
           <h1 className="font-bold">Dashboard</h1>
 
-          {/* MOBILE MENU */}
           <button
             className="md:hidden text-2xl"
             onClick={() => setMenuOpen(!menuOpen)}
@@ -79,7 +82,7 @@ function Dashboard() {
 
         </div>
 
-        {/* MOBILE MENU DROPDOWN */}
+        {/* MOBILE MENU */}
         {menuOpen && (
           <div className="md:hidden bg-blue-900 text-white p-3 space-y-2 rounded mb-4">
 
