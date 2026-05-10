@@ -7,7 +7,6 @@ function Sidebar() {
 
   const token = localStorage.getItem("token");
 
-  // 🔥 FETCH ACCOUNTS (FIXED)
   const fetchAccounts = async () => {
     try {
       const res = await axios.get(
@@ -27,13 +26,14 @@ function Sidebar() {
     fetchAccounts();
   }, []);
 
-  // 🔥 SELECT ACCOUNT FIX
+  // ✔️ FIXED ACCOUNT SELECT
   const selectAccount = (id) => {
     localStorage.setItem("accountId", id);
+
+    // 🔥 IMPORTANT: force reload for proper sync
     window.location.href = "/dashboard";
   };
 
-  // 🔥 CREATE ACCOUNT FIX
   const createAccount = async () => {
     try {
       await axios.post(
@@ -44,7 +44,7 @@ function Sidebar() {
         }
       );
 
-      fetchAccounts(); // refresh list immediately
+      fetchAccounts();
     } catch (err) {
       console.log(err);
     }
@@ -58,7 +58,7 @@ function Sidebar() {
   return (
     <>
       {/* ================= DESKTOP ================= */}
-      <div className="hidden md:flex flex-col w-64 h-screen bg-blue-900 text-white fixed left-0 top-0">
+      <div className="hidden md:flex flex-col w-64 h-screen bg-blue-900 text-white fixed">
 
         <h1 className="font-bold p-4 border-b border-blue-700">
           💳 Digital Bank
@@ -66,7 +66,6 @@ function Sidebar() {
 
         <div className="p-4 space-y-3">
 
-          {/* CREATE BUTTON */}
           <button
             onClick={createAccount}
             className="bg-green-500 w-full py-2 rounded"
@@ -74,13 +73,10 @@ function Sidebar() {
             + Create Account
           </button>
 
-          {/* ACCOUNT LIST */}
           <div className="space-y-2 max-h-[65vh] overflow-y-auto">
 
             {accounts.length === 0 ? (
-              <p className="text-sm text-gray-300">
-                No accounts found
-              </p>
+              <p className="text-sm text-gray-300">No accounts found</p>
             ) : (
               accounts.map((acc) => (
                 <div
@@ -97,7 +93,7 @@ function Sidebar() {
 
           <button
             onClick={logout}
-            className="bg-red-500 w-full py-2 rounded mt-3"
+            className="bg-red-500 w-full py-2 rounded"
           >
             Logout
           </button>
@@ -108,7 +104,6 @@ function Sidebar() {
       {/* ================= MOBILE ================= */}
       <div className="md:hidden w-full bg-blue-900 text-white">
 
-        {/* TOP BAR */}
         <div className="flex justify-between items-center px-4 py-3 border-b border-blue-700">
 
           <h1 className="font-bold">💳 Digital Bank</h1>
@@ -122,11 +117,9 @@ function Sidebar() {
 
         </div>
 
-        {/* DROPDOWN */}
         {open && (
           <div className="bg-blue-800 p-3 space-y-3 max-h-[75vh] overflow-y-auto">
 
-            {/* CREATE ACCOUNT */}
             <button
               onClick={createAccount}
               className="bg-green-500 w-full py-2 rounded"
@@ -134,11 +127,8 @@ function Sidebar() {
               + Create Account
             </button>
 
-            {/* ACCOUNT LIST */}
             {accounts.length === 0 ? (
-              <p className="text-sm text-gray-300">
-                No accounts found
-              </p>
+              <p className="text-sm text-gray-300">No accounts found</p>
             ) : (
               accounts.map((acc) => (
                 <div
@@ -151,7 +141,6 @@ function Sidebar() {
               ))
             )}
 
-            {/* LOGOUT */}
             <button
               onClick={logout}
               className="bg-red-500 w-full py-2 rounded"
