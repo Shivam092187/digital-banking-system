@@ -16,6 +16,7 @@ function Sidebar() {
         }
       );
 
+      console.log("accounts api:", res.data.accounts); // 🔥 debug
       setAccounts(res.data.accounts || []);
     } catch (err) {
       console.log(err);
@@ -74,15 +75,24 @@ function Sidebar() {
             Your Accounts
           </h2>
 
-          {accounts.map((acc) => (
-            <div
-              key={acc._id}
-              onClick={() => selectAccount(acc._id)}
-              className="bg-blue-700 p-2 rounded cursor-pointer break-all"
-            >
-              {acc._id}
-            </div>
-          ))}
+          {/* 🔥 FIX: SCROLL + FULL LIST */}
+          <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-1">
+
+            {accounts.length === 0 ? (
+              <p className="text-sm text-gray-300">No accounts found</p>
+            ) : (
+              accounts.map((acc) => (
+                <div
+                  key={acc._id}
+                  onClick={() => selectAccount(acc._id)}
+                  className="bg-blue-700 p-2 rounded cursor-pointer text-sm break-words"
+                >
+                  {acc._id}
+                </div>
+              ))
+            )}
+
+          </div>
 
           <button
             onClick={logout}
@@ -90,6 +100,7 @@ function Sidebar() {
           >
             Logout
           </button>
+
         </div>
       </div>
 
@@ -100,7 +111,6 @@ function Sidebar() {
 
           <h1 className="font-bold">💳 Digital Bank</h1>
 
-          {/* 🔥 3 LINE MENU */}
           <button
             onClick={() => setOpen(!open)}
             className="text-2xl"
@@ -110,9 +120,9 @@ function Sidebar() {
 
         </div>
 
-        {/* 🔥 DROPDOWN MENU */}
+        {/* 🔥 MOBILE MENU */}
         {open && (
-          <div className="bg-blue-800 p-3 space-y-2">
+          <div className="bg-blue-800 p-3 space-y-2 max-h-80 overflow-y-auto">
 
             <button
               onClick={createAccount}
@@ -125,7 +135,7 @@ function Sidebar() {
               <div
                 key={acc._id}
                 onClick={() => selectAccount(acc._id)}
-                className="bg-blue-700 p-1 rounded text-sm break-all"
+                className="bg-blue-700 p-2 rounded text-sm break-words cursor-pointer"
               >
                 {acc._id}
               </div>
@@ -140,6 +150,7 @@ function Sidebar() {
 
           </div>
         )}
+
       </div>
     </>
   );
