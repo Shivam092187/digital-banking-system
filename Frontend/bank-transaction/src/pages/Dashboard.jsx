@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import Sidebar from "../components/Sidebar";
 import AddFund from "../components/AddFund";
 import Transfer from "../components/Transfer";
 import TransactionList from "../components/TransactionList";
@@ -8,25 +7,14 @@ import TransactionList from "../components/TransactionList";
 function Dashboard() {
   const [balance, setBalance] = useState(0);
   const [accountId, setAccountId] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const token = localStorage.getItem("token");
 
-  // 🔥 FIX: realtime sync accountId
+  // 🔥 sync account
   useEffect(() => {
-    const syncAccount = () => {
-      const id = localStorage.getItem("accountId");
-      setAccountId(id);
-    };
-
-    syncAccount();
-
-    window.addEventListener("focus", syncAccount);
-    window.addEventListener("storage", syncAccount);
-
-    return () => {
-      window.removeEventListener("focus", syncAccount);
-      window.removeEventListener("storage", syncAccount);
-    };
+    const id = localStorage.getItem("accountId");
+    setAccountId(id);
   }, []);
 
   const fetchBalance = async (id) => {
@@ -47,27 +35,72 @@ function Dashboard() {
   };
 
   useEffect(() => {
-    if (accountId) {
-      fetchBalance(accountId);
-    }
+    if (accountId) fetchBalance(accountId);
   }, [accountId]);
 
+  const logout = () => {
+    localStorage.clear();
+    window.location.href = "/";
+  };
+
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100">
 
-      {/* 🔥 IMPORTANT: Sidebar ALWAYS visible */}
-      <Sidebar />
+      {/* 🔥 TOP BAR (MOBILE + DESKTOP) */}
+      <div className="flex justify-between items-center bg-blue-900 text-white px-4 py-3">
 
-      {/* MAIN CONTENT */}
-      <div className="flex-1 md:ml-64 p-4">
+        <h1 className="font-bold">Dashboard</h1>
 
-        {/* SELECTED ACCOUNT */}
-        <div className="bg-white p-3 mb-4 shadow rounded">
-          <p className="text-sm text-gray-600">Selected Account:</p>
-          <p className="font-bold break-all">
-            {accountId || "No Account Selected"}
-          </p>
+        {/* ☰ MENU BUTTON */}
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="text-2xl md:hidden"
+        >
+          ☰
+        </button>
+
+      </div>
+
+      {/* 🔥 MOBILE DROPDOWN MENU */}
+      {menuOpen && (
+        <div className="md:hidden bg-blue-800 text-white p-3 space-y-3">
+
+          {/* CREATE ACCOUNT */}
+          <button
+            onClick={() => alert("Create Account API call here")}
+            className="bg-green-500 w-full py-2 rounded"
+          >
+            + Create Account
+          </button>
+
+          {/* ACCOUNT LIST */}
+          <div className="space-y-2">
+
+            {accountId ? (
+              <div className="bg-blue-700 p-2 rounded text-sm break-all">
+                {accountId}
+              </div>
+            ) : (
+              <p className="text-sm text-gray-300">
+                No account selected
+              </p>
+            )}
+
+          </div>
+
+          {/* LOGOUT */}
+          <button
+            onClick={logout}
+            className="bg-red-500 w-full py-2 rounded"
+          >
+            Logout
+          </button>
+
         </div>
+      )}
+
+      {/* 🔥 MAIN CONTENT */}
+      <div className="p-4">
 
         {/* BALANCE */}
         <div className="bg-blue-600 text-white p-6 rounded mb-4">
@@ -79,21 +112,15 @@ function Dashboard() {
         {accountId ? (
           <>
             <div className="grid md:grid-cols-2 gap-4 mb-4">
-              <AddFund
-                accountId={accountId}
-                onSuccess={() => fetchBalance(accountId)}
-              />
-              <Transfer
-                accountId={accountId}
-                onSuccess={() => fetchBalance(accountId)}
-              />
+              <AddFund accountId={accountId} onSuccess={() => fetchBalance(accountId)} />
+              <Transfer accountId={accountId} onSuccess={() => fetchBalance(accountId)} />
             </div>
 
             <TransactionList accountId={accountId} />
           </>
         ) : (
           <p className="text-gray-500">
-            Please select an account from sidebar
+            Please select an account
           </p>
         )}
 
