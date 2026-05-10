@@ -28,53 +28,120 @@ function Sidebar() {
 
   const selectAccount = (id) => {
     localStorage.setItem("accountId", id);
-    window.location.href = "/dashboard"; // 🔥 FIX
+    window.location.href = "/dashboard";
+  };
+
+  const createAccount = async () => {
+    try {
+      await axios.post(
+        "https://digital-banking-system-1.onrender.com/api/accounts/create",
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      fetchAccounts(); // 🔥 refresh list
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const logout = () => {
+    localStorage.clear();
+    window.location.href = "/";
   };
 
   return (
     <>
-      {/* DESKTOP */}
-      <div className="hidden md:flex flex-col w-64 h-screen bg-blue-900 text-white fixed">
+      {/* ================= DESKTOP ================= */}
+      <div className="hidden md:flex flex-col w-64 h-screen bg-blue-900 text-white fixed left-0 top-0">
 
-        <h1 className="p-4 font-bold border-b border-blue-700">
+        <h1 className="font-bold p-4 border-b border-blue-700">
           💳 Digital Bank
         </h1>
 
-        <div className="p-4 space-y-2">
-          {accounts.map((acc) => (
-            <div
-              key={acc._id}
-              onClick={() => selectAccount(acc._id)}
-              className="bg-blue-700 p-2 rounded cursor-pointer"
-            >
-              {acc._id}
-            </div>
-          ))}
-        </div>
+        <div className="p-4 space-y-3">
 
+          {/* CREATE BUTTON (FIXED) */}
+          <button
+            onClick={createAccount}
+            className="bg-green-500 w-full py-2 rounded"
+          >
+            + Create Account
+          </button>
+
+          {/* ACCOUNT LIST (FIXED) */}
+          <div className="space-y-2 max-h-[60vh] overflow-y-auto">
+
+            {accounts.length === 0 ? (
+              <p className="text-sm text-gray-300">No accounts found</p>
+            ) : (
+              accounts.map((acc) => (
+                <div
+                  key={acc._id}
+                  onClick={() => selectAccount(acc._id)}
+                  className="bg-blue-700 p-2 rounded cursor-pointer text-sm break-words"
+                >
+                  {acc._id}
+                </div>
+              ))
+            )}
+
+          </div>
+
+          <button
+            onClick={logout}
+            className="bg-red-500 w-full py-2 rounded mt-3"
+          >
+            Logout
+          </button>
+
+        </div>
       </div>
 
-      {/* MOBILE */}
+      {/* ================= MOBILE ================= */}
       <div className="md:hidden w-full bg-blue-900 text-white">
 
-        <div className="flex justify-between p-3 border-b border-blue-700">
-          <h1>💳 Digital Bank</h1>
+        <div className="flex justify-between items-center px-4 py-3 border-b border-blue-700">
 
-          <button onClick={() => setOpen(!open)}>☰</button>
+          <h1 className="font-bold">💳 Digital Bank</h1>
+
+          <button
+            onClick={() => setOpen(!open)}
+            className="text-2xl"
+          >
+            ☰
+          </button>
+
         </div>
 
         {open && (
-          <div className="p-3 space-y-2 bg-blue-800">
+          <div className="bg-blue-800 p-3 space-y-3 max-h-[70vh] overflow-y-auto">
+
+            <button
+              onClick={createAccount}
+              className="bg-green-500 w-full py-2 rounded"
+            >
+              + Create Account
+            </button>
 
             {accounts.map((acc) => (
               <div
                 key={acc._id}
                 onClick={() => selectAccount(acc._id)}
-                className="bg-blue-700 p-2 rounded"
+                className="bg-blue-700 p-2 rounded text-sm break-words cursor-pointer"
               >
                 {acc._id}
               </div>
             ))}
+
+            <button
+              onClick={logout}
+              className="bg-red-500 w-full py-2 rounded"
+            >
+              Logout
+            </button>
 
           </div>
         )}
