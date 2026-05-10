@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
 function Sidebar() {
   const [accounts, setAccounts] = useState([]);
   const [open, setOpen] = useState(false);
 
-  const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
   const fetchAccounts = async () => {
@@ -96,48 +94,53 @@ function Sidebar() {
       </div>
 
       {/* ================= MOBILE TOP BAR ONLY ================= */}
-      <div className="md:hidden w-full bg-blue-900 text-white flex justify-between items-center px-4 py-3">
+      <div className="md:hidden w-full bg-blue-900 text-white">
 
-        <h1 className="font-bold">💳 Digital Bank</h1>
+        <div className="flex justify-between items-center px-4 py-3 border-b border-blue-700">
 
-        {/* 🔥 ARROW BUTTON ONLY */}
-        <button
-          onClick={() => setOpen(!open)}
-          className="text-xl"
-        >
-          {open ? "▲" : "▼"}
-        </button>
-      </div>
+          <h1 className="font-bold">💳 Digital Bank</h1>
 
-      {/* 🔥 SMALL DROPDOWN (NOT FULL SIDEBAR) */}
-      {open && (
-        <div className="md:hidden bg-blue-800 text-white p-3 space-y-2">
-
+          {/* 🔥 RIGHT SIDE ARROW ONLY */}
           <button
-            onClick={createAccount}
-            className="bg-green-500 w-full py-1 rounded"
+            onClick={() => setOpen(!open)}
+            className="text-xl"
           >
-            + Create Account
+            {open ? "▲" : "▼"}
           </button>
 
-          {accounts.slice(0, 3).map((acc) => (
-            <div
-              key={acc._id}
-              onClick={() => selectAccount(acc._id)}
-              className="bg-blue-700 p-1 rounded cursor-pointer break-all text-sm"
-            >
-              {acc._id}
-            </div>
-          ))}
-
-          <button
-            onClick={logout}
-            className="bg-red-500 w-full py-1 rounded"
-          >
-            Logout
-          </button>
         </div>
-      )}
+
+        {/* 🔥 SMALL DROPDOWN UNDER TOP BAR */}
+        {open && (
+          <div className="bg-blue-800 p-3 space-y-2">
+
+            <button
+              onClick={createAccount}
+              className="bg-green-500 w-full py-1 rounded"
+            >
+              + Create Account
+            </button>
+
+            {accounts.slice(0, 4).map((acc) => (
+              <div
+                key={acc._id}
+                onClick={() => selectAccount(acc._id)}
+                className="bg-blue-700 p-1 rounded text-sm break-all"
+              >
+                {acc._id}
+              </div>
+            ))}
+
+            <button
+              onClick={logout}
+              className="bg-red-500 w-full py-1 rounded"
+            >
+              Logout
+            </button>
+
+          </div>
+        )}
+      </div>
     </>
   );
 }
