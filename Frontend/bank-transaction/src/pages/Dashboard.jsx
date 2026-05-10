@@ -12,22 +12,10 @@ function Dashboard() {
 
   const token = localStorage.getItem("token");
 
-  // 🔥 SYNC FIX (VERY IMPORTANT)
+  // 🔥 SIMPLE & RELIABLE SYNC
   useEffect(() => {
-    const syncAccount = () => {
-      const id = localStorage.getItem("accountId");
-      setAccountId(id);
-    };
-
-    syncAccount();
-
-    window.addEventListener("focus", syncAccount);
-    window.addEventListener("storage", syncAccount);
-
-    return () => {
-      window.removeEventListener("focus", syncAccount);
-      window.removeEventListener("storage", syncAccount);
-    };
+    const id = localStorage.getItem("accountId");
+    setAccountId(id);
   }, []);
 
   const fetchBalance = async (id) => {
@@ -66,7 +54,7 @@ function Dashboard() {
         <Sidebar />
       </div>
 
-      {/* MAIN */}
+      {/* MAIN CONTENT */}
       <div className="flex-1 md:ml-64 p-4">
 
         {/* TOP BAR */}
@@ -74,6 +62,7 @@ function Dashboard() {
 
           <h1 className="font-bold">Dashboard</h1>
 
+          {/* MOBILE MENU BUTTON */}
           <button
             className="md:hidden text-2xl"
             onClick={() => setMenuOpen(!menuOpen)}
@@ -111,8 +100,14 @@ function Dashboard() {
         {accountId ? (
           <>
             <div className="grid md:grid-cols-2 gap-4 mb-4">
-              <AddFund accountId={accountId} onSuccess={() => fetchBalance(accountId)} />
-              <Transfer accountId={accountId} onSuccess={() => fetchBalance(accountId)} />
+              <AddFund
+                accountId={accountId}
+                onSuccess={() => fetchBalance(accountId)}
+              />
+              <Transfer
+                accountId={accountId}
+                onSuccess={() => fetchBalance(accountId)}
+              />
             </div>
 
             <TransactionList accountId={accountId} />
