@@ -8,6 +8,7 @@ import TransactionList from "../components/TransactionList";
 function Dashboard() {
   const [balance, setBalance] = useState(0);
   const [accountId, setAccountId] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const token = localStorage.getItem("token");
 
@@ -39,39 +40,71 @@ function Dashboard() {
     }
   }, [accountId]);
 
+  const logout = () => {
+    localStorage.clear();
+    window.location.href = "/";
+  };
+
   return (
     <div className="flex min-h-screen bg-gray-100">
 
-      {/* 🔥 ALWAYS VISIBLE SIDEBAR */}
-      <Sidebar />
+      {/* DESKTOP SIDEBAR */}
+      <div className="hidden md:block">
+        <Sidebar />
+      </div>
 
-      {/* MAIN CONTENT */}
-      <div className="flex-1 md:ml-64 ml-64 p-4">
+      {/* MAIN DASHBOARD */}
+      <div className="flex-1 md:ml-64 ml-0 p-4">
 
+        {/* 🔥 TOP BAR (MOBILE MENU HERE) */}
+        <div className="flex justify-between items-center bg-white p-3 shadow mb-4">
+
+          <h1 className="font-bold">Dashboard</h1>
+
+          {/* 🔥 MOBILE MENU ICON */}
+          <button
+            className="md:hidden text-2xl"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            ☰
+          </button>
+
+        </div>
+
+        {/* 🔥 MOBILE DROPDOWN MENU */}
+        {menuOpen && (
+          <div className="md:hidden bg-blue-900 text-white p-3 space-y-2 rounded mb-4">
+
+            <p className="break-all text-sm">{accountId}</p>
+
+            <button
+              onClick={logout}
+              className="bg-red-500 w-full py-1 rounded"
+            >
+              Logout
+            </button>
+
+          </div>
+        )}
+
+        {/* BALANCE */}
         <div className="bg-blue-600 text-white p-6 rounded mb-4">
           <h2>Current Balance</h2>
           <h1 className="text-3xl font-bold">₹ {balance}</h1>
         </div>
 
+        {/* ACTIONS */}
         {accountId ? (
           <>
             <div className="grid md:grid-cols-2 gap-4 mb-4">
-              <AddFund
-                accountId={accountId}
-                onSuccess={() => fetchBalance(accountId)}
-              />
-              <Transfer
-                accountId={accountId}
-                onSuccess={() => fetchBalance(accountId)}
-              />
+              <AddFund accountId={accountId} onSuccess={() => fetchBalance(accountId)} />
+              <Transfer accountId={accountId} onSuccess={() => fetchBalance(accountId)} />
             </div>
 
             <TransactionList accountId={accountId} />
           </>
         ) : (
-          <p className="text-gray-500">
-            Please select an account
-          </p>
+          <p className="text-gray-500">Please select an account</p>
         )}
 
       </div>
