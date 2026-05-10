@@ -28,14 +28,8 @@ function Sidebar() {
     fetchAccounts();
   }, []);
 
-  // ✅ FIXED ACCOUNT SELECT (IMPORTANT)
   const selectAccount = (id) => {
     localStorage.setItem("accountId", id);
-
-    // force state refresh
-    setOpen(false);
-
-    // refresh dashboard properly
     window.location.href = "/dashboard";
   };
 
@@ -101,49 +95,49 @@ function Sidebar() {
         </div>
       </div>
 
-      {/* ================= MOBILE TOP BAR ================= */}
-      <div className="md:hidden w-full bg-blue-900 text-white">
+      {/* ================= MOBILE TOP BAR ONLY ================= */}
+      <div className="md:hidden w-full bg-blue-900 text-white flex justify-between items-center px-4 py-3">
 
-        <div className="flex justify-between items-center px-4 py-3 border-b border-blue-700">
-          <h1 className="font-bold">💳 Digital Bank</h1>
+        <h1 className="font-bold">💳 Digital Bank</h1>
+
+        {/* 🔥 ARROW BUTTON ONLY */}
+        <button
+          onClick={() => setOpen(!open)}
+          className="text-xl"
+        >
+          {open ? "▲" : "▼"}
+        </button>
+      </div>
+
+      {/* 🔥 SMALL DROPDOWN (NOT FULL SIDEBAR) */}
+      {open && (
+        <div className="md:hidden bg-blue-800 text-white p-3 space-y-2">
 
           <button
-            onClick={() => setOpen(!open)}
-            className="text-2xl"
+            onClick={createAccount}
+            className="bg-green-500 w-full py-1 rounded"
           >
-            ☰
+            + Create Account
+          </button>
+
+          {accounts.slice(0, 3).map((acc) => (
+            <div
+              key={acc._id}
+              onClick={() => selectAccount(acc._id)}
+              className="bg-blue-700 p-1 rounded cursor-pointer break-all text-sm"
+            >
+              {acc._id}
+            </div>
+          ))}
+
+          <button
+            onClick={logout}
+            className="bg-red-500 w-full py-1 rounded"
+          >
+            Logout
           </button>
         </div>
-
-        {open && (
-          <div className="bg-blue-800 p-4 space-y-3">
-
-            <button
-              onClick={createAccount}
-              className="bg-green-500 w-full py-2 rounded"
-            >
-              + Create Account
-            </button>
-
-            {accounts.map((acc) => (
-              <div
-                key={acc._id}
-                onClick={() => selectAccount(acc._id)}
-                className="bg-blue-700 p-2 rounded cursor-pointer break-all"
-              >
-                {acc._id}
-              </div>
-            ))}
-
-            <button
-              onClick={logout}
-              className="bg-red-500 w-full py-2 rounded mt-3"
-            >
-              Logout
-            </button>
-          </div>
-        )}
-      </div>
+      )}
     </>
   );
 }
