@@ -28,15 +28,20 @@ function Sidebar() {
     fetchAccounts();
   }, []);
 
+  // ✅ FIXED ACCOUNT SELECT (IMPORTANT)
   const selectAccount = (id) => {
     localStorage.setItem("accountId", id);
-    navigate("/dashboard");
+
+    // force state refresh
     setOpen(false);
+
+    // refresh dashboard properly
+    window.location.href = "/dashboard";
   };
 
   const logout = () => {
     localStorage.clear();
-    navigate("/");
+    window.location.href = "/";
   };
 
   const createAccount = async () => {
@@ -57,8 +62,8 @@ function Sidebar() {
 
   return (
     <>
-      {/* ================= DESKTOP SIDEBAR (ONLY FIX: fixed position) ================= */}
-      <div className="hidden md:flex flex-col w-64 h-screen bg-blue-900 text-white fixed top-0 left-0">
+      {/* ================= DESKTOP SIDEBAR ================= */}
+      <div className="hidden md:flex flex-col w-64 h-screen bg-blue-900 text-white fixed left-0 top-0">
 
         <h1 className="font-bold p-4 border-b border-blue-700">
           💳 Digital Bank
@@ -76,12 +81,6 @@ function Sidebar() {
           <h2 className="text-sm font-semibold mt-2">
             Your Accounts
           </h2>
-
-          {accounts.length === 0 && (
-            <p className="text-sm text-gray-300">
-              No accounts found
-            </p>
-          )}
 
           {accounts.map((acc) => (
             <div
@@ -102,7 +101,7 @@ function Sidebar() {
         </div>
       </div>
 
-      {/* ================= MOBILE TOP BAR (NO DESIGN CHANGE) ================= */}
+      {/* ================= MOBILE TOP BAR ================= */}
       <div className="md:hidden w-full bg-blue-900 text-white">
 
         <div className="flex justify-between items-center px-4 py-3 border-b border-blue-700">
