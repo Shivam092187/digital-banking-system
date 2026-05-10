@@ -94,15 +94,14 @@ function Sidebar() {
         </div>
       </div>
 
-      {/* ================= MOBILE TOP BAR ================= */}
+      {/* ================= MOBILE (FIXED STABLE MENU) ================= */}
       <div className="md:hidden w-full bg-blue-900 text-white">
 
-        {/* TOP BAR (FIXED) */}
+        {/* TOP BAR */}
         <div className="flex justify-between items-center px-4 py-3 border-b border-blue-700">
 
           <h1 className="font-bold">💳 Digital Bank</h1>
 
-          {/* ☰ MENU ICON */}
           <button
             onClick={() => setOpen(!open)}
             className="text-2xl"
@@ -112,16 +111,19 @@ function Sidebar() {
 
         </div>
 
-        {/* DROPDOWN */}
-        {open && (
-          <div className="bg-blue-800 p-3 space-y-3 max-h-[75vh] overflow-y-auto">
+        {/* MENU AREA */}
+        <div className={`bg-blue-800 transition-all duration-300 overflow-hidden ${open ? "max-h-[500px] p-3 space-y-3" : "max-h-0"}`}>
 
-            <button
-              onClick={createAccount}
-              className="bg-green-500 w-full py-2 rounded"
-            >
-              + Create Account
-            </button>
+          {/* CREATE ACCOUNT */}
+          <button
+            onClick={createAccount}
+            className="bg-green-500 w-full py-2 rounded"
+          >
+            + Create Account
+          </button>
+
+          {/* ACCOUNT LIST */}
+          <div className="space-y-2">
 
             {accounts.length === 0 ? (
               <p className="text-sm text-gray-300">
@@ -139,15 +141,17 @@ function Sidebar() {
               ))
             )}
 
-            <button
-              onClick={logout}
-              className="bg-red-500 w-full py-2 rounded"
-            >
-              Logout
-            </button>
-
           </div>
-        )}
+
+          {/* LOGOUT */}
+          <button
+            onClick={logout}
+            className="bg-red-500 w-full py-2 rounded"
+          >
+            Logout
+          </button>
+
+        </div>
 
       </div>
     </>
