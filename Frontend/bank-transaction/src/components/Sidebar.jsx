@@ -16,8 +16,7 @@ function Sidebar() {
         }
       );
 
-      console.log("ACCOUNTS:", res.data.accounts); // 🔥 DEBUG IMPORTANT
-      setAccounts([...res.data.accounts]); // 🔥 force fresh copy
+      setAccounts(res.data.accounts || []);
     } catch (err) {
       console.log(err);
     }
@@ -47,7 +46,7 @@ function Sidebar() {
         }
       );
 
-      await fetchAccounts(); // 🔥 ensure refresh complete
+      fetchAccounts();
     } catch (err) {
       console.log(err);
     }
@@ -71,11 +70,15 @@ function Sidebar() {
             + Create Account
           </button>
 
+          <h2 className="text-sm font-semibold mt-2">
+            Your Accounts
+          </h2>
+
           <div className="space-y-2 max-h-[60vh] overflow-y-auto">
 
-            {accounts.map((acc, index) => (
+            {accounts.map((acc) => (
               <div
-                key={acc._id || index}
+                key={acc._id}
                 onClick={() => selectAccount(acc._id)}
                 className="bg-blue-700 p-2 rounded cursor-pointer text-sm break-words"
               >
@@ -98,6 +101,7 @@ function Sidebar() {
       {/* ================= MOBILE ================= */}
       <div className="md:hidden w-full bg-blue-900 text-white">
 
+        {/* TOP BAR */}
         <div className="flex justify-between items-center px-4 py-3 border-b border-blue-700">
 
           <h1 className="font-bold">💳 Digital Bank</h1>
@@ -111,30 +115,37 @@ function Sidebar() {
 
         </div>
 
-        {/* 🔥 IMPORTANT FIX HERE */}
+        {/* MOBILE MENU */}
         {open && (
-          <div className="bg-blue-800 p-3 space-y-2 max-h-80 overflow-y-auto">
+          <div className="bg-blue-800 p-3 space-y-3 max-h-[70vh] overflow-y-auto">
 
+            {/* 🔥 CREATE ACCOUNT BUTTON (FIXED) */}
             <button
               onClick={createAccount}
-              className="bg-green-500 w-full py-1 rounded"
+              className="bg-green-500 w-full py-2 rounded"
             >
               + Create Account
             </button>
 
-            {accounts.map((acc, index) => (
-              <div
-                key={acc._id || index}
-                onClick={() => selectAccount(acc._id)}
-                className="bg-blue-700 p-2 rounded text-sm break-words cursor-pointer"
-              >
-                {acc._id}
-              </div>
-            ))}
+            {/* 🔥 FULL ACCOUNT LIST */}
+            {accounts.length === 0 ? (
+              <p className="text-sm text-gray-300">No accounts found</p>
+            ) : (
+              accounts.map((acc) => (
+                <div
+                  key={acc._id}
+                  onClick={() => selectAccount(acc._id)}
+                  className="bg-blue-700 p-2 rounded text-sm break-words cursor-pointer"
+                >
+                  {acc._id}
+                </div>
+              ))
+            )}
 
+            {/* LOGOUT */}
             <button
               onClick={logout}
-              className="bg-red-500 w-full py-1 rounded"
+              className="bg-red-500 w-full py-2 rounded"
             >
               Logout
             </button>
