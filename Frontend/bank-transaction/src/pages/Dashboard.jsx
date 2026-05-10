@@ -12,7 +12,7 @@ function Dashboard() {
 
   const token = localStorage.getItem("token");
 
-  // 🔥 IMPROVED SYNC (FIXED)
+  // 🔥 SYNC FIX (VERY IMPORTANT)
   useEffect(() => {
     const syncAccount = () => {
       const id = localStorage.getItem("accountId");
@@ -21,11 +21,12 @@ function Dashboard() {
 
     syncAccount();
 
-    // 🔥 FIX: also listen focus (same tab issue fix)
     window.addEventListener("focus", syncAccount);
+    window.addEventListener("storage", syncAccount);
 
     return () => {
       window.removeEventListener("focus", syncAccount);
+      window.removeEventListener("storage", syncAccount);
     };
   }, []);
 
@@ -66,7 +67,7 @@ function Dashboard() {
       </div>
 
       {/* MAIN */}
-      <div className="flex-1 md:ml-64 ml-0 p-4">
+      <div className="flex-1 md:ml-64 p-4">
 
         {/* TOP BAR */}
         <div className="flex justify-between items-center bg-white p-3 shadow mb-4">
@@ -84,7 +85,7 @@ function Dashboard() {
 
         {/* MOBILE MENU */}
         {menuOpen && (
-          <div className="md:hidden bg-blue-900 text-white p-3 space-y-2 rounded mb-4">
+          <div className="md:hidden bg-blue-900 text-white p-3 rounded mb-4">
 
             <p className="text-sm break-all">
               Account: {accountId || "Not Selected"}
@@ -92,7 +93,7 @@ function Dashboard() {
 
             <button
               onClick={logout}
-              className="bg-red-500 w-full py-1 rounded"
+              className="bg-red-500 w-full py-1 rounded mt-2"
             >
               Logout
             </button>
@@ -110,14 +111,8 @@ function Dashboard() {
         {accountId ? (
           <>
             <div className="grid md:grid-cols-2 gap-4 mb-4">
-              <AddFund
-                accountId={accountId}
-                onSuccess={() => fetchBalance(accountId)}
-              />
-              <Transfer
-                accountId={accountId}
-                onSuccess={() => fetchBalance(accountId)}
-              />
+              <AddFund accountId={accountId} onSuccess={() => fetchBalance(accountId)} />
+              <Transfer accountId={accountId} onSuccess={() => fetchBalance(accountId)} />
             </div>
 
             <TransactionList accountId={accountId} />

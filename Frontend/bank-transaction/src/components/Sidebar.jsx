@@ -26,8 +26,11 @@ function Sidebar() {
     fetchAccounts();
   }, []);
 
+  // 🔥 FIXED SELECT ACCOUNT
   const selectAccount = (id) => {
     localStorage.setItem("accountId", id);
+
+    // force reload so dashboard always syncs
     window.location.href = "/dashboard";
   };
 
@@ -70,10 +73,6 @@ function Sidebar() {
             + Create Account
           </button>
 
-          <h2 className="text-sm font-semibold mt-2">
-            Your Accounts
-          </h2>
-
           <div className="space-y-2 max-h-[60vh] overflow-y-auto">
 
             {accounts.map((acc) => (
@@ -101,7 +100,6 @@ function Sidebar() {
       {/* ================= MOBILE ================= */}
       <div className="md:hidden w-full bg-blue-900 text-white">
 
-        {/* TOP BAR */}
         <div className="flex justify-between items-center px-4 py-3 border-b border-blue-700">
 
           <h1 className="font-bold">💳 Digital Bank</h1>
@@ -115,11 +113,9 @@ function Sidebar() {
 
         </div>
 
-        {/* MOBILE MENU */}
         {open && (
           <div className="bg-blue-800 p-3 space-y-3 max-h-[70vh] overflow-y-auto">
 
-            {/* 🔥 CREATE ACCOUNT BUTTON (FIXED) */}
             <button
               onClick={createAccount}
               className="bg-green-500 w-full py-2 rounded"
@@ -127,22 +123,16 @@ function Sidebar() {
               + Create Account
             </button>
 
-            {/* 🔥 FULL ACCOUNT LIST */}
-            {accounts.length === 0 ? (
-              <p className="text-sm text-gray-300">No accounts found</p>
-            ) : (
-              accounts.map((acc) => (
-                <div
-                  key={acc._id}
-                  onClick={() => selectAccount(acc._id)}
-                  className="bg-blue-700 p-2 rounded text-sm break-words cursor-pointer"
-                >
-                  {acc._id}
-                </div>
-              ))
-            )}
+            {accounts.map((acc) => (
+              <div
+                key={acc._id}
+                onClick={() => selectAccount(acc._id)}
+                className="bg-blue-700 p-2 rounded text-sm break-words cursor-pointer"
+              >
+                {acc._id}
+              </div>
+            ))}
 
-            {/* LOGOUT */}
             <button
               onClick={logout}
               className="bg-red-500 w-full py-2 rounded"
