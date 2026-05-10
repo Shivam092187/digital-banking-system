@@ -9,11 +9,15 @@ function Dashboard() {
   const [balance, setBalance] = useState(0);
 
   // 🔥 IMPORTANT FIX
-  const [accountId, setAccountId] = useState(
-    localStorage.getItem("accountId")
-  );
+  const [accountId, setAccountId] = useState(null);
 
   const token = localStorage.getItem("token");
+
+  // 🔥 sync accountId properly
+  useEffect(() => {
+    const id = localStorage.getItem("accountId");
+    setAccountId(id);
+  }, []);
 
   const fetchBalance = async (id) => {
     try {
@@ -32,12 +36,11 @@ function Dashboard() {
     }
   };
 
-  // 🔥 watch account change
   useEffect(() => {
-    const id = localStorage.getItem("accountId");
-    setAccountId(id);
-    fetchBalance(id);
-  }, [localStorage.getItem("accountId")]);
+    if (accountId) {
+      fetchBalance(accountId);
+    }
+  }, [accountId]);
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -52,17 +55,16 @@ function Dashboard() {
           <h1 className="text-3xl font-bold">₹ {balance}</h1>
         </div>
 
-        {/* 🔥 ADD FUND + TRANSFER */}
-        {accountId && (
-          <div className="grid md:grid-cols-2 gap-4 mb-4">
-            <AddFund accountId={accountId} onSuccess={() => fetchBalance(accountId)} />
-            <Transfer accountId={accountId} onSuccess={() => fetchBalance(accountId)} />
-          </div>
-        )}
-
-        {/* 🔥 TRANSACTION LIST */}
+        {/* 🔥 ONLY SHOW WHEN ACCOUNT EXISTS */}
         {accountId ? (
-          <TransactionList accountId={accountId} />
+          <>
+            <div className="grid md:grid-cols-2 gap-4 mb-4">
+              <AddFund accountId={accountId} onSuccess={() => fetchBalance(accountId)} />
+              <Transfer accountId={accountId} onSuccess={() => fetchBalance(accountId)} />
+            </div>
+
+            <TransactionList accountId={accountId} />
+          </>
         ) : (
           <p className="text-gray-500">
             Please select an account
