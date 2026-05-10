@@ -11,7 +11,6 @@ function Dashboard() {
 
   const token = localStorage.getItem("token");
 
-  // ✔️ SIMPLE SYNC FIX
   useEffect(() => {
     const id = localStorage.getItem("accountId");
     setAccountId(id);
@@ -48,6 +47,14 @@ function Dashboard() {
       </div>
 
       <div className="flex-1 md:ml-64 p-4">
+
+        {/* 🔥 SHOW SELECTED ACCOUNT */}
+        <div className="bg-white p-3 mb-4 shadow rounded">
+          <p className="text-sm text-gray-600">Selected Account:</p>
+          <p className="font-bold break-all">
+            {accountId || "No Account Selected"}
+          </p>
+        </div>
 
         <div className="bg-blue-600 text-white p-6 rounded mb-4">
           <h2>Current Balance</h2>

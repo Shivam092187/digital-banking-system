@@ -55,7 +55,7 @@ function Sidebar() {
   return (
     <>
       {/* ================= DESKTOP ================= */}
-      <div className="hidden md:flex flex-col w-64 h-screen bg-blue-900 text-white fixed">
+      <div className="hidden md:flex flex-col w-64 h-screen bg-blue-900 text-white fixed left-0 top-0">
 
         <h1 className="font-bold p-4 border-b border-blue-700">
           💳 Digital Bank
@@ -97,12 +97,12 @@ function Sidebar() {
       {/* ================= MOBILE TOP BAR ================= */}
       <div className="md:hidden w-full bg-blue-900 text-white">
 
-        {/* TOP BAR */}
+        {/* TOP BAR (FIXED) */}
         <div className="flex justify-between items-center px-4 py-3 border-b border-blue-700">
 
           <h1 className="font-bold">💳 Digital Bank</h1>
 
-          {/* ☰ MENU ICON (FIXED) */}
+          {/* ☰ MENU ICON */}
           <button
             onClick={() => setOpen(!open)}
             className="text-2xl"
@@ -112,7 +112,7 @@ function Sidebar() {
 
         </div>
 
-        {/* DROPDOWN MENU */}
+        {/* DROPDOWN */}
         {open && (
           <div className="bg-blue-800 p-3 space-y-3 max-h-[75vh] overflow-y-auto">
 
@@ -123,15 +123,21 @@ function Sidebar() {
               + Create Account
             </button>
 
-            {accounts.map((acc) => (
-              <div
-                key={acc._id}
-                onClick={() => selectAccount(acc._id)}
-                className="bg-blue-700 p-2 rounded text-sm break-all cursor-pointer"
-              >
-                {acc._id}
-              </div>
-            ))}
+            {accounts.length === 0 ? (
+              <p className="text-sm text-gray-300">
+                No accounts found
+              </p>
+            ) : (
+              accounts.map((acc) => (
+                <div
+                  key={acc._id}
+                  onClick={() => selectAccount(acc._id)}
+                  className="bg-blue-700 p-2 rounded cursor-pointer text-sm break-all"
+                >
+                  {acc._id}
+                </div>
+              ))
+            )}
 
             <button
               onClick={logout}
