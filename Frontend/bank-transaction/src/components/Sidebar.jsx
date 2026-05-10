@@ -69,6 +69,10 @@ function Sidebar() {
             + Create Account
           </button>
 
+          <h2 className="text-sm font-semibold mt-2">
+            Your Accounts
+          </h2>
+
           {accounts.map((acc) => (
             <div
               key={acc._id}
@@ -85,7 +89,6 @@ function Sidebar() {
           >
             Logout
           </button>
-
         </div>
       </div>
 
@@ -94,12 +97,11 @@ function Sidebar() {
 
         <h1 className="font-bold">💳 Digital Bank</h1>
 
-        {/* 🔥 ONLY HAMBURGER ICON */}
         <button
-          className="text-2xl"
-          onClick={() => {}}
+          onClick={logout}
+          className="bg-red-500 px-3 py-1 rounded text-sm"
         >
-          ☰
+          Logout
         </button>
 
       </div>

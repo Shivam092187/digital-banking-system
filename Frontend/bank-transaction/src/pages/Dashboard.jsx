@@ -7,13 +7,10 @@ import TransactionList from "../components/TransactionList";
 
 function Dashboard() {
   const [balance, setBalance] = useState(0);
-
-  // 🔥 IMPORTANT FIX
   const [accountId, setAccountId] = useState(null);
 
   const token = localStorage.getItem("token");
 
-  // 🔥 sync accountId properly
   useEffect(() => {
     const id = localStorage.getItem("accountId");
     setAccountId(id);
@@ -45,22 +42,30 @@ function Dashboard() {
   return (
     <div className="flex min-h-screen bg-gray-100">
 
+      {/* Sidebar (desktop only inside itself via md:hidden) */}
       <Sidebar />
 
-      <div className="flex-1 md:ml-64 p-4">
+      {/* 🔥 MAIN FIX (NO MOBILE SPACE ISSUE) */}
+      <div className="flex-1 p-4 md:ml-64 ml-0">
 
-        {/* BALANCE */}
+        {/* BALANCE CARD */}
         <div className="bg-blue-600 text-white p-6 rounded mb-4">
           <h2>Current Balance</h2>
           <h1 className="text-3xl font-bold">₹ {balance}</h1>
         </div>
 
-        {/* 🔥 ONLY SHOW WHEN ACCOUNT EXISTS */}
+        {/* ACCOUNT DEPENDENT UI */}
         {accountId ? (
           <>
             <div className="grid md:grid-cols-2 gap-4 mb-4">
-              <AddFund accountId={accountId} onSuccess={() => fetchBalance(accountId)} />
-              <Transfer accountId={accountId} onSuccess={() => fetchBalance(accountId)} />
+              <AddFund
+                accountId={accountId}
+                onSuccess={() => fetchBalance(accountId)}
+              />
+              <Transfer
+                accountId={accountId}
+                onSuccess={() => fetchBalance(accountId)}
+              />
             </div>
 
             <TransactionList accountId={accountId} />
