@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Sidebar from "../components/Sidebar";
 import AddFund from "../components/AddFund";
 import Transfer from "../components/Transfer";
 import TransactionList from "../components/TransactionList";
@@ -11,7 +12,6 @@ function Dashboard() {
 
   const token = localStorage.getItem("token");
 
-  // 🔥 sync account
   useEffect(() => {
     const id = localStorage.getItem("accountId");
     setAccountId(id);
@@ -44,71 +44,62 @@ function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="flex min-h-screen bg-gray-100">
 
-      {/* 🔥 TOP BAR (MOBILE + DESKTOP) */}
-      <div className="flex justify-between items-center bg-blue-900 text-white px-4 py-3">
-
-        <h1 className="font-bold">Dashboard</h1>
-
-        {/* ☰ MENU BUTTON */}
-        <button
-          onClick={() => setMenuOpen(!menuOpen)}
-          className="text-2xl md:hidden"
-        >
-          ☰
-        </button>
-
+      {/* 🔥 DESKTOP SIDEBAR (UNCHANGED) */}
+      <div className="hidden md:block">
+        <Sidebar />
       </div>
 
-      {/* 🔥 MOBILE DROPDOWN MENU */}
-      {menuOpen && (
-        <div className="md:hidden bg-blue-800 text-white p-3 space-y-3">
+      {/* MAIN AREA */}
+      <div className="flex-1 md:ml-64 p-4">
 
-          {/* CREATE ACCOUNT */}
+        {/* 🔥 MOBILE TOP BAR ONLY */}
+        <div className="md:hidden flex justify-between items-center bg-blue-900 text-white px-4 py-3">
+
+          <h1 className="font-bold">Dashboard</h1>
+
           <button
-            onClick={() => alert("Create Account API call here")}
-            className="bg-green-500 w-full py-2 rounded"
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="text-2xl"
           >
-            + Create Account
-          </button>
-
-          {/* ACCOUNT LIST */}
-          <div className="space-y-2">
-
-            {accountId ? (
-              <div className="bg-blue-700 p-2 rounded text-sm break-all">
-                {accountId}
-              </div>
-            ) : (
-              <p className="text-sm text-gray-300">
-                No account selected
-              </p>
-            )}
-
-          </div>
-
-          {/* LOGOUT */}
-          <button
-            onClick={logout}
-            className="bg-red-500 w-full py-2 rounded"
-          >
-            Logout
+            ☰
           </button>
 
         </div>
-      )}
 
-      {/* 🔥 MAIN CONTENT */}
-      <div className="p-4">
+        {/* 🔥 MOBILE MENU ONLY */}
+        {menuOpen && (
+          <div className="md:hidden bg-blue-800 text-white p-3 space-y-3">
 
-        {/* BALANCE */}
+            <button
+              onClick={logout}
+              className="bg-red-500 w-full py-2 rounded"
+            >
+              Logout
+            </button>
+
+            <p className="text-sm break-all">
+              Account: {accountId || "Not Selected"}
+            </p>
+
+          </div>
+        )}
+
+        {/* 🔥 DESKTOP + MOBILE CONTENT SAME (NO CHANGE) */}
+
+        <div className="bg-white p-3 mb-4 shadow rounded">
+          <p className="text-sm text-gray-600">Selected Account:</p>
+          <p className="font-bold break-all">
+            {accountId || "No Account Selected"}
+          </p>
+        </div>
+
         <div className="bg-blue-600 text-white p-6 rounded mb-4">
           <h2>Current Balance</h2>
           <h1 className="text-3xl font-bold">₹ {balance}</h1>
         </div>
 
-        {/* ACTIONS */}
         {accountId ? (
           <>
             <div className="grid md:grid-cols-2 gap-4 mb-4">
@@ -120,7 +111,7 @@ function Dashboard() {
           </>
         ) : (
           <p className="text-gray-500">
-            Please select an account
+            Please select an account from sidebar
           </p>
         )}
 
