@@ -7,6 +7,7 @@ function Sidebar() {
 
   const token = localStorage.getItem("token");
 
+  // 🔥 FETCH ACCOUNTS (FIXED)
   const fetchAccounts = async () => {
     try {
       const res = await axios.get(
@@ -26,11 +27,13 @@ function Sidebar() {
     fetchAccounts();
   }, []);
 
+  // 🔥 SELECT ACCOUNT FIX
   const selectAccount = (id) => {
     localStorage.setItem("accountId", id);
     window.location.href = "/dashboard";
   };
 
+  // 🔥 CREATE ACCOUNT FIX
   const createAccount = async () => {
     try {
       await axios.post(
@@ -41,7 +44,7 @@ function Sidebar() {
         }
       );
 
-      fetchAccounts(); // 🔥 refresh list
+      fetchAccounts(); // refresh list immediately
     } catch (err) {
       console.log(err);
     }
@@ -63,7 +66,7 @@ function Sidebar() {
 
         <div className="p-4 space-y-3">
 
-          {/* CREATE BUTTON (FIXED) */}
+          {/* CREATE BUTTON */}
           <button
             onClick={createAccount}
             className="bg-green-500 w-full py-2 rounded"
@@ -71,17 +74,19 @@ function Sidebar() {
             + Create Account
           </button>
 
-          {/* ACCOUNT LIST (FIXED) */}
-          <div className="space-y-2 max-h-[60vh] overflow-y-auto">
+          {/* ACCOUNT LIST */}
+          <div className="space-y-2 max-h-[65vh] overflow-y-auto">
 
             {accounts.length === 0 ? (
-              <p className="text-sm text-gray-300">No accounts found</p>
+              <p className="text-sm text-gray-300">
+                No accounts found
+              </p>
             ) : (
               accounts.map((acc) => (
                 <div
                   key={acc._id}
                   onClick={() => selectAccount(acc._id)}
-                  className="bg-blue-700 p-2 rounded cursor-pointer text-sm break-words"
+                  className="bg-blue-700 p-2 rounded cursor-pointer text-sm break-all"
                 >
                   {acc._id}
                 </div>
@@ -103,6 +108,7 @@ function Sidebar() {
       {/* ================= MOBILE ================= */}
       <div className="md:hidden w-full bg-blue-900 text-white">
 
+        {/* TOP BAR */}
         <div className="flex justify-between items-center px-4 py-3 border-b border-blue-700">
 
           <h1 className="font-bold">💳 Digital Bank</h1>
@@ -116,9 +122,11 @@ function Sidebar() {
 
         </div>
 
+        {/* DROPDOWN */}
         {open && (
-          <div className="bg-blue-800 p-3 space-y-3 max-h-[70vh] overflow-y-auto">
+          <div className="bg-blue-800 p-3 space-y-3 max-h-[75vh] overflow-y-auto">
 
+            {/* CREATE ACCOUNT */}
             <button
               onClick={createAccount}
               className="bg-green-500 w-full py-2 rounded"
@@ -126,16 +134,24 @@ function Sidebar() {
               + Create Account
             </button>
 
-            {accounts.map((acc) => (
-              <div
-                key={acc._id}
-                onClick={() => selectAccount(acc._id)}
-                className="bg-blue-700 p-2 rounded text-sm break-words cursor-pointer"
-              >
-                {acc._id}
-              </div>
-            ))}
+            {/* ACCOUNT LIST */}
+            {accounts.length === 0 ? (
+              <p className="text-sm text-gray-300">
+                No accounts found
+              </p>
+            ) : (
+              accounts.map((acc) => (
+                <div
+                  key={acc._id}
+                  onClick={() => selectAccount(acc._id)}
+                  className="bg-blue-700 p-2 rounded cursor-pointer text-sm break-all"
+                >
+                  {acc._id}
+                </div>
+              ))
+            )}
 
+            {/* LOGOUT */}
             <button
               onClick={logout}
               className="bg-red-500 w-full py-2 rounded"
