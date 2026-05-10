@@ -18,7 +18,7 @@ A secure full-stack banking system built using the MERN stack that simulates rea
 - Ledger-Based Transaction System
 - Transaction History Tracking
 - Secure Backend APIs with Middleware Protection
-- Email Service: Nodemailer
+- Email Notifications using Nodemailer (Transaction Alerts)
 
 ---
 
@@ -28,7 +28,8 @@ Frontend: React.js, Tailwind CSS, Axios
 Backend: Node.js, Express.js  
 Database: MongoDB, Mongoose  
 Security: JWT Authentication, bcrypt
-Email Notification System (Nodemailer Integration)
+Email Service: Nodemailer
+
 
 ---
 
@@ -52,6 +53,7 @@ npm run dev
 - MongoDB Aggregation Pipeline  
 - JWT Authentication  
 - Secure Transaction Flow (DEBIT / CREDIT)
+- Email Notification System (Nodemailer Integration)
 
 ---
 
