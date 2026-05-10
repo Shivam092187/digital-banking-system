@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 function Sidebar() {
   const [accounts, setAccounts] = useState([]);
+  const [open, setOpen] = useState(false);
 
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
@@ -29,12 +30,13 @@ function Sidebar() {
 
   const selectAccount = (id) => {
     localStorage.setItem("accountId", id);
-    window.location.href = "/dashboard";
+    navigate("/dashboard");
+    setOpen(false);
   };
 
   const logout = () => {
     localStorage.clear();
-    window.location.href = "/";
+    navigate("/");
   };
 
   const createAccount = async () => {
@@ -56,14 +58,16 @@ function Sidebar() {
   return (
     <>
       {/* ================= DESKTOP SIDEBAR ================= */}
-      <div className="hidden md:flex flex-col w-64 h-screen bg-blue-900 text-white fixed left-0 top-0">
+      <div className="hidden md:flex flex-col w-64 h-screen bg-blue-900 text-white">
 
+        {/* HEADER */}
         <h1 className="font-bold p-4 border-b border-blue-700">
           💳 Digital Bank
         </h1>
 
         <div className="p-4 space-y-3">
 
+          {/* CREATE ACCOUNT */}
           <button
             onClick={createAccount}
             className="bg-green-500 w-full py-2 rounded"
@@ -71,9 +75,16 @@ function Sidebar() {
             + Create Account
           </button>
 
+          {/* ACCOUNTS */}
           <h2 className="text-sm font-semibold mt-2">
             Your Accounts
           </h2>
+
+          {accounts.length === 0 && (
+            <p className="text-sm text-gray-300">
+              No accounts found
+            </p>
+          )}
 
           {accounts.map((acc) => (
             <div
@@ -85,6 +96,7 @@ function Sidebar() {
             </div>
           ))}
 
+          {/* LOGOUT */}
           <button
             onClick={logout}
             className="bg-red-500 w-full py-2 rounded mt-3"
@@ -97,17 +109,47 @@ function Sidebar() {
       {/* ================= MOBILE TOP BAR ONLY ================= */}
       <div className="md:hidden w-full bg-blue-900 text-white">
 
+        {/* TOP BAR */}
         <div className="flex justify-between items-center px-4 py-3 border-b border-blue-700">
           <h1 className="font-bold">💳 Digital Bank</h1>
 
           <button
-            onClick={logout}
-            className="text-sm bg-red-500 px-2 py-1 rounded"
+            onClick={() => setOpen(!open)}
+            className="text-2xl"
           >
-            Logout
+            ☰
           </button>
         </div>
 
+        {/* DROPDOWN MENU */}
+        {open && (
+          <div className="bg-blue-800 p-4 space-y-3">
+
+            <button
+              onClick={createAccount}
+              className="bg-green-500 w-full py-2 rounded"
+            >
+              + Create Account
+            </button>
+
+            {accounts.map((acc) => (
+              <div
+                key={acc._id}
+                onClick={() => selectAccount(acc._id)}
+                className="bg-blue-700 p-2 rounded cursor-pointer break-all"
+              >
+                {acc._id}
+              </div>
+            ))}
+
+            <button
+              onClick={logout}
+              className="bg-red-500 w-full py-2 rounded mt-3"
+            >
+              Logout
+            </button>
+          </div>
+        )}
       </div>
     </>
   );
