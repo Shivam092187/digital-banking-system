@@ -55,7 +55,7 @@ function Sidebar() {
   return (
     <>
       {/* ================= DESKTOP ================= */}
-      <div className="hidden md:flex flex-col w-64 h-screen bg-blue-900 text-white fixed left-0 top-0">
+      <div className="hidden md:block w-64 h-screen bg-blue-900 text-white fixed left-0 top-0">
 
         <h1 className="font-bold p-4 border-b border-blue-700">
           💳 Digital Bank
@@ -70,7 +70,7 @@ function Sidebar() {
             + Create Account
           </button>
 
-          <div className="space-y-2 max-h-[65vh] overflow-y-auto">
+          <div className="space-y-2 mt-3 max-h-[60vh] overflow-y-auto">
 
             {accounts.map((acc) => (
               <div
@@ -86,7 +86,7 @@ function Sidebar() {
 
           <button
             onClick={logout}
-            className="bg-red-500 w-full py-2 rounded"
+            className="bg-red-500 w-full py-2 rounded mt-3"
           >
             Logout
           </button>
@@ -94,64 +94,63 @@ function Sidebar() {
         </div>
       </div>
 
-      {/* ================= MOBILE (FIXED STABLE MENU) ================= */}
+      {/* ================= MOBILE ================= */}
       <div className="md:hidden w-full bg-blue-900 text-white">
 
-        {/* TOP BAR */}
+        {/* TOP BAR (IMPORTANT - ALWAYS VISIBLE) */}
         <div className="flex justify-between items-center px-4 py-3 border-b border-blue-700">
 
           <h1 className="font-bold">💳 Digital Bank</h1>
 
           <button
             onClick={() => setOpen(!open)}
-            className="text-2xl"
+            className="text-3xl"
           >
             ☰
           </button>
 
         </div>
 
-        {/* MENU AREA */}
-        <div className={`bg-blue-800 transition-all duration-300 overflow-hidden ${open ? "max-h-[500px] p-3 space-y-3" : "max-h-0"}`}>
+        {/* MENU */}
+        {open && (
+          <div className="bg-blue-800 p-3 space-y-3">
 
-          {/* CREATE ACCOUNT */}
-          <button
-            onClick={createAccount}
-            className="bg-green-500 w-full py-2 rounded"
-          >
-            + Create Account
-          </button>
+            <button
+              onClick={createAccount}
+              className="bg-green-500 w-full py-2 rounded"
+            >
+              + Create Account
+            </button>
 
-          {/* ACCOUNT LIST */}
-          <div className="space-y-2">
+            <div className="space-y-2">
 
-            {accounts.length === 0 ? (
-              <p className="text-sm text-gray-300">
-                No accounts found
-              </p>
-            ) : (
-              accounts.map((acc) => (
-                <div
-                  key={acc._id}
-                  onClick={() => selectAccount(acc._id)}
-                  className="bg-blue-700 p-2 rounded cursor-pointer text-sm break-all"
-                >
-                  {acc._id}
-                </div>
-              ))
-            )}
+              {accounts.length === 0 ? (
+                <p className="text-sm text-gray-300">
+                  No accounts found
+                </p>
+              ) : (
+                accounts.map((acc) => (
+                  <div
+                    key={acc._id}
+                    onClick={() => selectAccount(acc._id)}
+                    className="bg-blue-700 p-2 rounded cursor-pointer text-sm break-all"
+                  >
+                    {acc._id}
+                  </div>
+                ))
+              )}
+
+            </div>
+
+            <button
+              onClick={logout}
+              className="bg-red-500 w-full py-2 rounded"
+            >
+              Logout
+            </button>
 
           </div>
-
-          {/* LOGOUT */}
-          <button
-            onClick={logout}
-            className="bg-red-500 w-full py-2 rounded"
-          >
-            Logout
-          </button>
-
-        </div>
+        )}
 
       </div>
     </>
