@@ -11,9 +11,22 @@ function Dashboard() {
 
   const token = localStorage.getItem("token");
 
+  // 🔥 FIX: realtime sync accountId
   useEffect(() => {
-    const id = localStorage.getItem("accountId");
-    setAccountId(id);
+    const syncAccount = () => {
+      const id = localStorage.getItem("accountId");
+      setAccountId(id);
+    };
+
+    syncAccount();
+
+    window.addEventListener("focus", syncAccount);
+    window.addEventListener("storage", syncAccount);
+
+    return () => {
+      window.removeEventListener("focus", syncAccount);
+      window.removeEventListener("storage", syncAccount);
+    };
   }, []);
 
   const fetchBalance = async (id) => {
@@ -42,13 +55,13 @@ function Dashboard() {
   return (
     <div className="flex min-h-screen bg-gray-100">
 
-      <div className="hidden md:block">
-        <Sidebar />
-      </div>
+      {/* 🔥 IMPORTANT: Sidebar ALWAYS visible */}
+      <Sidebar />
 
+      {/* MAIN CONTENT */}
       <div className="flex-1 md:ml-64 p-4">
 
-        {/* 🔥 SHOW SELECTED ACCOUNT */}
+        {/* SELECTED ACCOUNT */}
         <div className="bg-white p-3 mb-4 shadow rounded">
           <p className="text-sm text-gray-600">Selected Account:</p>
           <p className="font-bold break-all">
@@ -56,16 +69,24 @@ function Dashboard() {
           </p>
         </div>
 
+        {/* BALANCE */}
         <div className="bg-blue-600 text-white p-6 rounded mb-4">
           <h2>Current Balance</h2>
           <h1 className="text-3xl font-bold">₹ {balance}</h1>
         </div>
 
+        {/* ACTIONS */}
         {accountId ? (
           <>
             <div className="grid md:grid-cols-2 gap-4 mb-4">
-              <AddFund accountId={accountId} onSuccess={() => fetchBalance(accountId)} />
-              <Transfer accountId={accountId} onSuccess={() => fetchBalance(accountId)} />
+              <AddFund
+                accountId={accountId}
+                onSuccess={() => fetchBalance(accountId)}
+              />
+              <Transfer
+                accountId={accountId}
+                onSuccess={() => fetchBalance(accountId)}
+              />
             </div>
 
             <TransactionList accountId={accountId} />
