@@ -28,15 +28,20 @@ function Sidebar() {
     fetchAccounts();
   }, []);
 
+  // ✅ FIXED ACCOUNT SELECT (IMPORTANT)
   const selectAccount = (id) => {
     localStorage.setItem("accountId", id);
-    navigate("/dashboard");
+
+    // force state refresh
     setOpen(false);
+
+    // refresh dashboard properly
+    window.location.href = "/dashboard";
   };
 
   const logout = () => {
     localStorage.clear();
-    navigate("/");
+    window.location.href = "/";
   };
 
   const createAccount = async () => {
@@ -58,16 +63,14 @@ function Sidebar() {
   return (
     <>
       {/* ================= DESKTOP SIDEBAR ================= */}
-      <div className="hidden md:flex flex-col w-64 h-screen bg-blue-900 text-white">
+      <div className="hidden md:flex flex-col w-64 h-screen bg-blue-900 text-white fixed left-0 top-0">
 
-        {/* HEADER */}
         <h1 className="font-bold p-4 border-b border-blue-700">
           💳 Digital Bank
         </h1>
 
         <div className="p-4 space-y-3">
 
-          {/* CREATE ACCOUNT */}
           <button
             onClick={createAccount}
             className="bg-green-500 w-full py-2 rounded"
@@ -75,16 +78,9 @@ function Sidebar() {
             + Create Account
           </button>
 
-          {/* ACCOUNTS */}
           <h2 className="text-sm font-semibold mt-2">
             Your Accounts
           </h2>
-
-          {accounts.length === 0 && (
-            <p className="text-sm text-gray-300">
-              No accounts found
-            </p>
-          )}
 
           {accounts.map((acc) => (
             <div
@@ -96,7 +92,6 @@ function Sidebar() {
             </div>
           ))}
 
-          {/* LOGOUT */}
           <button
             onClick={logout}
             className="bg-red-500 w-full py-2 rounded mt-3"
@@ -106,10 +101,9 @@ function Sidebar() {
         </div>
       </div>
 
-      {/* ================= MOBILE TOP BAR ONLY ================= */}
+      {/* ================= MOBILE TOP BAR ================= */}
       <div className="md:hidden w-full bg-blue-900 text-white">
 
-        {/* TOP BAR */}
         <div className="flex justify-between items-center px-4 py-3 border-b border-blue-700">
           <h1 className="font-bold">💳 Digital Bank</h1>
 
@@ -121,7 +115,6 @@ function Sidebar() {
           </button>
         </div>
 
-        {/* DROPDOWN MENU */}
         {open && (
           <div className="bg-blue-800 p-4 space-y-3">
 
