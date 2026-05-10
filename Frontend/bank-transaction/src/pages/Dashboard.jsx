@@ -8,16 +8,36 @@ import TransactionList from "../components/TransactionList";
 function Dashboard() {
   const [balance, setBalance] = useState(0);
   const [accountId, setAccountId] = useState(null);
+  const [accounts, setAccounts] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false);
 
   const token = localStorage.getItem("token");
 
-  // 🔥 SYNC ACCOUNT
+  // 🔥 FETCH ACCOUNTS
+  const fetchAccounts = async () => {
+    try {
+      const res = await axios.get(
+        "https://digital-banking-system-1.onrender.com/api/accounts",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      setAccounts(res.data.accounts || []);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // 🔥 LOAD INITIAL DATA
   useEffect(() => {
     const id = localStorage.getItem("accountId");
     setAccountId(id);
+
+    fetchAccounts();
   }, []);
 
+  // 🔥 FETCH BALANCE
   const fetchBalance = async (id) => {
     try {
       if (!id) return;
@@ -39,6 +59,30 @@ function Dashboard() {
     if (accountId) fetchBalance(accountId);
   }, [accountId]);
 
+  // 🔥 CREATE ACCOUNT (FIXED REAL API)
+  const createAccount = async () => {
+    try {
+      await axios.post(
+        "https://digital-banking-system-1.onrender.com/api/accounts/create",
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      fetchAccounts(); // refresh list
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // 🔥 SELECT ACCOUNT
+  const selectAccount = (id) => {
+    localStorage.setItem("accountId", id);
+    setAccountId(id);
+    setMenuOpen(false);
+  };
+
   const logout = () => {
     localStorage.clear();
     window.location.href = "/";
@@ -52,10 +96,10 @@ function Dashboard() {
         <Sidebar />
       </div>
 
-      {/* 🔥 MAIN CONTENT */}
+      {/* MAIN CONTENT */}
       <div className="flex-1 md:ml-64 p-4">
 
-        {/* 🔥 TOP BAR (MOBILE ONLY MENU BUTTON) */}
+        {/* 🔥 TOP BAR (MOBILE ONLY) */}
         <div className="md:hidden flex justify-between items-center bg-blue-900 text-white px-4 py-3">
 
           <h1 className="font-bold">Dashboard</h1>
@@ -69,13 +113,13 @@ function Dashboard() {
 
         </div>
 
-        {/* 🔥 MOBILE MENU (FIXED COMPLETE) */}
+        {/* 🔥 MOBILE MENU */}
         {menuOpen && (
           <div className="md:hidden bg-blue-800 text-white p-3 space-y-3">
 
             {/* CREATE ACCOUNT */}
             <button
-              onClick={() => alert("Call create account API here")}
+              onClick={createAccount}
               className="bg-green-500 w-full py-2 rounded"
             >
               + Create Account
@@ -84,14 +128,20 @@ function Dashboard() {
             {/* ACCOUNT LIST */}
             <div className="space-y-2">
 
-              {accountId ? (
-                <div className="bg-blue-700 p-2 rounded text-sm break-all">
-                  {accountId}
-                </div>
-              ) : (
+              {accounts.length === 0 ? (
                 <p className="text-sm text-gray-300">
-                  No Account Selected
+                  No Accounts Found
                 </p>
+              ) : (
+                accounts.map((acc) => (
+                  <div
+                    key={acc._id}
+                    onClick={() => selectAccount(acc._id)}
+                    className="bg-blue-700 p-2 rounded text-sm break-all cursor-pointer"
+                  >
+                    {acc._id}
+                  </div>
+                ))
               )}
 
             </div>
@@ -131,7 +181,7 @@ function Dashboard() {
           </>
         ) : (
           <p className="text-gray-500">
-            Please select an account from sidebar
+            Please select an account
           </p>
         )}
 
