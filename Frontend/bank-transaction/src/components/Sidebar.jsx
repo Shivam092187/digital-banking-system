@@ -8,13 +8,23 @@ function Sidebar() {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    axios
-      .get("https://digital-banking-system-1.onrender.com/api/accounts", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => setAccounts(res.data.accounts || []))
-      .catch((err) => console.log(err));
+    loadAccounts();
   }, []);
+
+  const loadAccounts = async () => {
+    try {
+      const res = await axios.get(
+        "https://digital-banking-system-1.onrender.com/api/accounts",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      setAccounts(res.data.accounts || []);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const selectAccount = (id) => {
     localStorage.setItem("accountId", id);
@@ -31,14 +41,7 @@ function Sidebar() {
         }
       );
 
-      const res = await axios.get(
-        "https://digital-banking-system-1.onrender.com/api/accounts",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      setAccounts(res.data.accounts || []);
+      loadAccounts();
     } catch (err) {
       console.log(err);
     }
@@ -50,9 +53,8 @@ function Sidebar() {
   };
 
   return (
-    <div className="w-full">
-
-      {/* 🔥 MOBILE TOP BAR (ALWAYS VISIBLE) */}
+    <>
+      {/* ================= MOBILE TOP BAR ================= */}
       <div className="md:hidden flex justify-between items-center bg-blue-900 text-white p-4">
 
         <h1 className="font-bold">Digital Bank</h1>
@@ -66,7 +68,7 @@ function Sidebar() {
 
       </div>
 
-      {/* 🔥 MOBILE MENU */}
+      {/* ================= MOBILE MENU (FORCE RENDER) ================= */}
       {open && (
         <div className="md:hidden bg-blue-800 text-white p-3 space-y-3">
 
@@ -77,15 +79,25 @@ function Sidebar() {
             + Create Account
           </button>
 
-          {accounts.map((acc) => (
-            <div
-              key={acc._id}
-              onClick={() => selectAccount(acc._id)}
-              className="bg-blue-700 p-2 rounded text-sm break-all"
-            >
-              {acc._id}
-            </div>
-          ))}
+          <div className="space-y-2">
+
+            {accounts.length === 0 ? (
+              <p className="text-sm text-gray-300">
+                No accounts found
+              </p>
+            ) : (
+              accounts.map((acc) => (
+                <div
+                  key={acc._id}
+                  onClick={() => selectAccount(acc._id)}
+                  className="bg-blue-700 p-2 rounded text-sm break-all"
+                >
+                  {acc._id}
+                </div>
+              ))
+            )}
+
+          </div>
 
           <button
             onClick={logout}
@@ -97,8 +109,8 @@ function Sidebar() {
         </div>
       )}
 
-      {/* 🔥 DESKTOP SIDEBAR */}
-      <div className="hidden md:block w-64 h-screen bg-blue-900 text-white fixed left-0 top-0">
+      {/* ================= DESKTOP ================= */}
+      <div className="hidden md:flex flex-col w-64 h-screen bg-blue-900 text-white fixed">
 
         <h1 className="font-bold p-4 border-b border-blue-700">
           Digital Bank
@@ -132,8 +144,7 @@ function Sidebar() {
 
         </div>
       </div>
-
-    </div>
+    </>
   );
 }
 
