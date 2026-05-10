@@ -16,8 +16,8 @@ function Sidebar() {
         }
       );
 
-      console.log("accounts api:", res.data.accounts); // 🔥 debug
-      setAccounts(res.data.accounts || []);
+      console.log("ACCOUNTS:", res.data.accounts); // 🔥 DEBUG IMPORTANT
+      setAccounts([...res.data.accounts]); // 🔥 force fresh copy
     } catch (err) {
       console.log(err);
     }
@@ -47,7 +47,7 @@ function Sidebar() {
         }
       );
 
-      fetchAccounts();
+      await fetchAccounts(); // 🔥 ensure refresh complete
     } catch (err) {
       console.log(err);
     }
@@ -55,7 +55,7 @@ function Sidebar() {
 
   return (
     <>
-      {/* ================= DESKTOP SIDEBAR ================= */}
+      {/* ================= DESKTOP ================= */}
       <div className="hidden md:flex flex-col w-64 h-screen bg-blue-900 text-white fixed left-0 top-0">
 
         <h1 className="font-bold p-4 border-b border-blue-700">
@@ -71,26 +71,17 @@ function Sidebar() {
             + Create Account
           </button>
 
-          <h2 className="text-sm font-semibold mt-2">
-            Your Accounts
-          </h2>
+          <div className="space-y-2 max-h-[60vh] overflow-y-auto">
 
-          {/* 🔥 FIX: SCROLL + FULL LIST */}
-          <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-1">
-
-            {accounts.length === 0 ? (
-              <p className="text-sm text-gray-300">No accounts found</p>
-            ) : (
-              accounts.map((acc) => (
-                <div
-                  key={acc._id}
-                  onClick={() => selectAccount(acc._id)}
-                  className="bg-blue-700 p-2 rounded cursor-pointer text-sm break-words"
-                >
-                  {acc._id}
-                </div>
-              ))
-            )}
+            {accounts.map((acc, index) => (
+              <div
+                key={acc._id || index}
+                onClick={() => selectAccount(acc._id)}
+                className="bg-blue-700 p-2 rounded cursor-pointer text-sm break-words"
+              >
+                {acc._id}
+              </div>
+            ))}
 
           </div>
 
@@ -104,7 +95,7 @@ function Sidebar() {
         </div>
       </div>
 
-      {/* ================= MOBILE TOP BAR ================= */}
+      {/* ================= MOBILE ================= */}
       <div className="md:hidden w-full bg-blue-900 text-white">
 
         <div className="flex justify-between items-center px-4 py-3 border-b border-blue-700">
@@ -120,7 +111,7 @@ function Sidebar() {
 
         </div>
 
-        {/* 🔥 MOBILE MENU */}
+        {/* 🔥 IMPORTANT FIX HERE */}
         {open && (
           <div className="bg-blue-800 p-3 space-y-2 max-h-80 overflow-y-auto">
 
@@ -131,9 +122,9 @@ function Sidebar() {
               + Create Account
             </button>
 
-            {accounts.map((acc) => (
+            {accounts.map((acc, index) => (
               <div
-                key={acc._id}
+                key={acc._id || index}
                 onClick={() => selectAccount(acc._id)}
                 className="bg-blue-700 p-2 rounded text-sm break-words cursor-pointer"
               >
