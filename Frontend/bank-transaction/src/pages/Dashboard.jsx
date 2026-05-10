@@ -6,7 +6,6 @@ import Transfer from "../components/Transfer";
 import TransactionList from "../components/TransactionList";
 
 function Dashboard() {
-
   const [balance, setBalance] = useState(0);
 
   const accountId = localStorage.getItem("accountId");
@@ -24,7 +23,6 @@ function Dashboard() {
       );
 
       setBalance(res.data.balance);
-
     } catch (err) {
       console.log(err);
     }
@@ -37,32 +35,36 @@ function Dashboard() {
   return (
     <div className="flex min-h-screen bg-gray-100">
 
-      {/* DESKTOP SIDEBAR ONLY */}
+      {/* ================= SIDEBAR ================= */}
       <Sidebar />
 
-      {/* MAIN CONTENT (NO GAP FIX) */}
-      <div className="flex-1 md:ml-64 p-4">
+      {/* ================= MAIN CONTENT ================= */}
+      <div className="flex-1 p-4 md:ml-64">
 
-        {/* MOBILE TOP BAR ONLY (NO SIDEBAR) */}
-        <div className="md:hidden bg-white p-3 shadow mb-4">
-          <h1 className="font-bold">Digital Bank Dashboard</h1>
-          <p className="text-sm break-all">{accountId}</p>
+        {/* 🔥 MOBILE HEADER (only mobile) */}
+        <div className="md:hidden bg-white p-3 shadow mb-4 rounded">
+          <h1 className="font-bold text-lg">Digital Bank Dashboard</h1>
+          <p className="text-xs break-all text-gray-600">
+            {accountId || "No Account Selected"}
+          </p>
         </div>
 
-        {/* BALANCE */}
-        <div className="bg-blue-600 text-white p-6 rounded mb-4">
-          <h2>Current Balance</h2>
+        {/* ================= BALANCE CARD ================= */}
+        <div className="bg-blue-600 text-white p-6 rounded-lg mb-4 shadow">
+          <h2 className="text-sm">Current Balance</h2>
           <h1 className="text-3xl font-bold">₹ {balance}</h1>
         </div>
 
-        {/* ACTIONS */}
-        <div className="grid md:grid-cols-2 gap-4 mb-4">
+        {/* ================= ACTIONS ================= */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <AddFund accountId={accountId} onSuccess={fetchBalance} />
           <Transfer accountId={accountId} onSuccess={fetchBalance} />
         </div>
 
-        {/* TRANSACTIONS */}
-        <TransactionList />
+        {/* ================= TRANSACTIONS ================= */}
+        <div className="bg-white p-4 rounded shadow">
+          <TransactionList />
+        </div>
 
       </div>
     </div>
