@@ -26,11 +26,8 @@ function Sidebar() {
     fetchAccounts();
   }, []);
 
-  // ✔️ FIXED ACCOUNT SELECT
   const selectAccount = (id) => {
     localStorage.setItem("accountId", id);
-
-    // 🔥 IMPORTANT: force reload for proper sync
     window.location.href = "/dashboard";
   };
 
@@ -75,19 +72,15 @@ function Sidebar() {
 
           <div className="space-y-2 max-h-[65vh] overflow-y-auto">
 
-            {accounts.length === 0 ? (
-              <p className="text-sm text-gray-300">No accounts found</p>
-            ) : (
-              accounts.map((acc) => (
-                <div
-                  key={acc._id}
-                  onClick={() => selectAccount(acc._id)}
-                  className="bg-blue-700 p-2 rounded cursor-pointer text-sm break-all"
-                >
-                  {acc._id}
-                </div>
-              ))
-            )}
+            {accounts.map((acc) => (
+              <div
+                key={acc._id}
+                onClick={() => selectAccount(acc._id)}
+                className="bg-blue-700 p-2 rounded cursor-pointer text-sm break-all"
+              >
+                {acc._id}
+              </div>
+            ))}
 
           </div>
 
@@ -101,13 +94,15 @@ function Sidebar() {
         </div>
       </div>
 
-      {/* ================= MOBILE ================= */}
+      {/* ================= MOBILE TOP BAR ================= */}
       <div className="md:hidden w-full bg-blue-900 text-white">
 
+        {/* TOP BAR */}
         <div className="flex justify-between items-center px-4 py-3 border-b border-blue-700">
 
           <h1 className="font-bold">💳 Digital Bank</h1>
 
+          {/* ☰ MENU ICON (FIXED) */}
           <button
             onClick={() => setOpen(!open)}
             className="text-2xl"
@@ -117,6 +112,7 @@ function Sidebar() {
 
         </div>
 
+        {/* DROPDOWN MENU */}
         {open && (
           <div className="bg-blue-800 p-3 space-y-3 max-h-[75vh] overflow-y-auto">
 
@@ -127,19 +123,15 @@ function Sidebar() {
               + Create Account
             </button>
 
-            {accounts.length === 0 ? (
-              <p className="text-sm text-gray-300">No accounts found</p>
-            ) : (
-              accounts.map((acc) => (
-                <div
-                  key={acc._id}
-                  onClick={() => selectAccount(acc._id)}
-                  className="bg-blue-700 p-2 rounded cursor-pointer text-sm break-all"
-                >
-                  {acc._id}
-                </div>
-              ))
-            )}
+            {accounts.map((acc) => (
+              <div
+                key={acc._id}
+                onClick={() => selectAccount(acc._id)}
+                className="bg-blue-700 p-2 rounded text-sm break-all cursor-pointer"
+              >
+                {acc._id}
+              </div>
+            ))}
 
             <button
               onClick={logout}
